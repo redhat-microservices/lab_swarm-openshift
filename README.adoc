@@ -63,7 +63,7 @@ Provisioning OpenShift via '/Users/chmoulli/.minishift/cache/oc/v1.4.0-rc1/oc [c
 
 OR
 
-minishift start --openshift-version=v1.4.0-rc1 --memory=4000 --vm-driver=virtualbox
+minishift start --openshift-version=v1.4.0 --deploy-router --memory=4000 --vm-driver=virtualbox
 Starting local OpenShift cluster...
 Downloading OpenShift v1.4.0-rc1
  65.86 MB / 65.86 MB [============================================================================================================================================================================================================================] 100.00% 0sDownloading OpenShift v1.4.0-rc1 checksums
@@ -76,7 +76,7 @@ oc login --username=admin --password=admin
 ----
 
 Next, we will provide more rights for the admin `default` user in order to let it to access the different projects/namespaces to manage the resources.
-This step is only required if you use
+This step is only required if you use the new Minishift client (> 1.0.0.Beta2)
 
 [source]
 ----
@@ -86,7 +86,7 @@ oc login -u admin -p admin
 oc project default
 ----
 
-# Useful commands
+## Useful commands
 
 - Stop/start Minishift
 
@@ -96,7 +96,7 @@ minishift stop
 minishift start
 ----
 
-Optionally we can install the OpenShift templates ion order to have some examples like WildFly Server, ....
+Optionally we can install the OpenShift templates in order to have some examples like WildFly Server, ....
 
 [source]
 ----
