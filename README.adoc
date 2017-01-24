@@ -71,5 +71,15 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 oc login -u admin -p admin   
 ----
 
+# Useful commands
+
+- Stop/start Minishift
+
+[source]
+----
+minishift stop
+minishift start --vm-driver virtualbox
+----
+
 
 
