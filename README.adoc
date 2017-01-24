@@ -15,9 +15,9 @@ you will need to install the following on your machine:
 - [x] http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[JDK 1.8]
 - [x] https://maven.apache.org/download.cgi[Maven 3.3.6 or higher]
 - [x] https://www.virtualbox.org/wiki/Downloads[Virtualbox 5.0 or higher]
-- [x] https://github.com/minishift/minishift[Minishift 1.0.0.Beta2 or higher]
+- [] https://github.com/minishift/minishift[Minishift 1.0.0.Beta2]
+- [x] https://github.com/minishift/minishift/releases/tag/v0.9.0[Minishift 0.9.0]
 - [x] http://developers.redhat.com/products/devstudio/download/?referrer=jbd[JBoss Developer Studio 10 (optional)]
-
 
 # Installation of Minishift
 
@@ -31,7 +31,7 @@ We will configure the VM on the machine using Virtualbox as Hypervisor, the vers
 
 [source]
 ----
-minishift start --openshift-version v1.4.0-rc1 --memory 4000 --vm-driver virtualbox
+minishift start --memory=4000 --vm-driver=virtualbox
 
 Starting local OpenShift instance using 'virtualbox' hypervisor...
 Provisioning OpenShift via '/Users/chmoulli/.minishift/cache/oc/v1.4.0-rc1/oc [cluster up --use-existing-config --host-config-dir /var/lib/minishift/openshift.local.config --host-data-dir /var/lib/minishift/hostdata]'
@@ -56,19 +56,34 @@ Provisioning OpenShift via '/Users/chmoulli/.minishift/cache/oc/v1.4.0-rc1/oc [c
 -- Server Information ...
    OpenShift server started.
    The server is accessible via web console at:
-       https://192.168.99.100:8443
+       https://192.168.99.101:8443
 
    To login as administrator:
        oc login -u system:admin
+
+OR
+
+minishift start --openshift-version=v1.4.0-rc1 --memory=4000 --vm-driver=virtualbox
+Starting local OpenShift cluster...
+Downloading OpenShift v1.4.0-rc1
+ 65.86 MB / 65.86 MB [============================================================================================================================================================================================================================] 100.00% 0sDownloading OpenShift v1.4.0-rc1 checksums
+ 0 B / 773 B [---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------]   0.00%
+ 773 B / 773 B [==================================================================================================================================================================================================================================] 100.00% 0s
+oc is now configured to use the cluster.
+Run this command to use the cluster:
+oc login --username=admin --password=admin
+
 ----
 
-Next, we will provide more rights for the admin `default` user in order to let it to access the different projects/namespaces to manage the resources
+Next, we will provide more rights for the admin `default` user in order to let it to access the different projects/namespaces to manage the resources.
+This step is only required if you use
 
 [source]
 ----
-oc login https://192.168.99.100:8443 -u system:admin
+oc login https://192.168.99.101:8443 -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin admin
-oc login -u admin -p admin   
+oc login -u admin -p admin
+oc project default
 ----
 
 # Useful commands
@@ -78,7 +93,21 @@ oc login -u admin -p admin
 [source]
 ----
 minishift stop
-minishift start --vm-driver virtualbox
+minishift start
+----
+
+Optionally we can install the OpenShift templates ion order to have some examples like WildFly Server, ....
+
+[source]
+----
+export currentDir=$(pwd)
+cd $TEMP_DIR
+git clone https://github.com/openshift/openshift-ansible.git
+cd openshift-ansible/roles/openshift_examples/files/examples/latest/
+for f in image-streams/image-streams-centos7.json; do cat $f | oc create -n openshift -f -; done
+for f in db-templates/*.json; do cat $f | oc create -n openshift -f -; done
+for f in quickstart-templates/*.json; do cat $f | oc create -n openshift -f -; done
+cd $currentDir
 ----
 
 
