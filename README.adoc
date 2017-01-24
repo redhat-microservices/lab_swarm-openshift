@@ -156,7 +156,7 @@ cd ..
 
   mvn wildfly-swarm:run
 
-- Open project within your browser `http://localhost:8080/index.html`
+- Open project within your browser `http://localhost:8081/index.html`
 
 
 
