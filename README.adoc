@@ -14,6 +14,8 @@ you will need to install the following on your machine:
 
 - [x] http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[JDK 1.8]
 - [x] https://maven.apache.org/download.cgi[Maven 3.3.6 or higher]
+- [x] https://www.virtualbox.org/wiki/Downloads[Virtualbox 5.0 or higher]
+- [x] https://github.com/minishift/minishift[Minishift 1.0.0.Beta2 or higher]
 - [x] http://developers.redhat.com/products/devstudio/download/?referrer=jbd[JBoss Developer Studio 10 (optional)]
 
 
