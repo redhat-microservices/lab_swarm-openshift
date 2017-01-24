@@ -110,5 +110,22 @@ for f in quickstart-templates/*.json; do cat $f | oc create -n openshift -f -; d
 cd $currentDir
 ----
 
+# Create project
+
+[source]
+----
+forge
+project-new --named cdservice --stack JAVA_EE_7
+jpa-new-entity --named Catalog
+jpa-new-field --named name
+scaffold-setup --provider AngularJS
+scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
+wildfly-swarm-setup
+wildfly-swarm-detect-fractions --depend --build
+
+exit
+cd cdservice
+----
+
 
 
