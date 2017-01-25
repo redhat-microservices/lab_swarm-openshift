@@ -28,7 +28,8 @@ import org.cdservice.model.Catalog;
 @Stateless
 @Path("/catalogs")
 public class CatalogEndpoint {
-	@PersistenceContext(unitName = "cdservice-persistence-unit")
+	//@PersistenceContext(unitName = "cdservice-persistence-unit")
+	@PersistenceContext(unitName = "cdservice-postgresql-unit")
 	private EntityManager em;
 
 	@POST

@@ -8,8 +8,8 @@ angular.module('cdservice').factory('CatalogResource', function ($resource,$http
     .error(function () {
       console.log('could not find service.json ....');
     });
-  //var resource = $resource('http://localhost:8080/rest/catalogs/:CatalogId', {CatalogId: '@id'}, {
-  var resource = $resource(serviceUrl + ':CatalogId', {CatalogId: '@id'}, {
+  var resource = $resource('http://localhost:8080/rest/catalogs/:CatalogId', {CatalogId: '@id'}, {
+  //var resource = $resource(serviceUrl + ':CatalogId', {CatalogId: '@id'}, {
     'queryAll': {
       method: 'GET',
       isArray: true

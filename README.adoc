@@ -118,8 +118,16 @@ forge
 # create the CD Catalog Service project
 # ----------------  CD Catalog Service [:8080/rest] ---------------
 project-new --named cdservice --stack JAVA_EE_7
+
+# Define PostgreSQL DB
+jpa-setup --jpa-provider hibernate --db-type POSTGRES --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
+
 jpa-new-entity --named Catalog
-jpa-new-field --named name
+jpa-new-field --named artist
+jpa-new-field --named description --length 2000
+jpa-new-field --named price --type java.lang.Float
+jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE
+
 scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
 wildfly-swarm-setup
@@ -157,6 +165,14 @@ cd ..
   mvn wildfly-swarm:run
 
 - Open project within your browser `http://localhost:8081/index.html`
+
+# DB
+
+
+PGPASSWORD=$POSTGRESQL_PASSWORD psql -h postgresql $POSTGRESQL_DATABASE $POSTGRESQL_USER
+
+psql -U postgres postgresql
+CREATE DATABASE catalogdb OWNER postgres;
 
 
 
