@@ -177,6 +177,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- 2017.1.1 or 2017.2.0-SNAPSHOT-->
     <version.wildfly-swarm>2017.1.1</version.wildfly-swarm>
   </properties>
 </project>
