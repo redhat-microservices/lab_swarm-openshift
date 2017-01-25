@@ -4,17 +4,10 @@
   <groupId>org.cdservice</groupId>
   <artifactId>cdservice</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <build>
     <finalName>cdservice</finalName>
     <plugins>
-      <!--<plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>-->
       <plugin>
         <groupId>org.wildfly.swarm</groupId>
         <artifactId>wildfly-swarm-plugin</artifactId>
@@ -40,6 +33,13 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.bsc.maven</groupId>
@@ -128,6 +128,10 @@
             <directory>src/main/resources</directory>
           </resource>
         </resources>
+
+        <plugins>
+
+        </plugins>
       </build>
     </profile>
     <profile>
