@@ -13,7 +13,7 @@ spec:
               mountPath: /app/config
           env:
             - name: JAVA_OPTIONS
-              value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml -Dswarm.project.stage=openshift"
+              value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml"
       volumes:
         - configMap:
             name: ${project.artifactId}

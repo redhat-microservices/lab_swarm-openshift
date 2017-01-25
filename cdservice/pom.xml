@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.cdservice</groupId>
   <artifactId>cdservice</artifactId>
@@ -19,6 +20,9 @@
             </goals>
           </execution>
         </executions>
+        <!--        <configuration>
+                  <mainClass>org.cdservice.Main</mainClass>
+                </configuration>-->
       </plugin>
       <plugin>
         <groupId>io.fabric8</groupId>
@@ -33,14 +37,15 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
         <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <generator>
+            <includes>
+              <include>wildfly-swarm</include>
+            </includes>
+          </generator>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
@@ -92,7 +97,7 @@
     </dependency>
     <dependency>
       <groupId>org.wildfly.swarm</groupId>
-      <artifactId>jaxrs-jaxb</artifactId>
+      <artifactId>jaxrs</artifactId>
     </dependency>
     <dependency>
       <groupId>org.wildfly.swarm</groupId>
@@ -128,15 +133,20 @@
             <directory>src/main/resources</directory>
           </resource>
         </resources>
-
         <plugins>
-
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+              <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
     <profile>
       <id>kit</id>
-      <activation />
+      <activation/>
       <build>
         <plugins>
           <plugin>

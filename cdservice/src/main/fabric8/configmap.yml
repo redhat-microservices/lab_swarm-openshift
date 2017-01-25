@@ -2,18 +2,11 @@ metadata:
   name: ${project.artifactId}
 data:
   project-stages.yml: |-
-project:
-      stage: openshift
-swarm:
-  datasources:
-    data-sources:
-      CatalogDS:
-        driver-name: mysql
-        connection-url: jdbc:mysql://mysql:3306/catalogdb
-        user-name: mysql
-        password: mysql
----
-project:
-      stage: default
-logger:
-      level: DEBUG
+    swarm:
+      datasources:
+        data-sources:
+          CatalogDS:
+            driver-name: mysql
+            connection-url: jdbc:mysql://mysql:3306/catalogdb
+            user-name: mysql
+            password: mysql
