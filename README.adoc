@@ -166,13 +166,29 @@ cd ..
 
 - Open project within your browser `http://localhost:8081/index.html`
 
-# DB
+# Test MySQL DB
 
+[source]
+----
+export uuid=$(oc get pod | grep mysql | awk '{print $1}')
+oc rsh $uuid
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $HOSTNAME $MYSQL_DATABASE
 
-PGPASSWORD=$POSTGRESQL_PASSWORD psql -h postgresql $POSTGRESQL_DATABASE $POSTGRESQL_USER
+mysql> connect catalogdb;
+Connection id:    1628
+Current database: catalogdb
 
-psql -U postgres postgresql
-CREATE DATABASE catalogdb OWNER postgres;
+mysql> SELECT t.* FROM catalogdb.Catalog t;
++----+--------+---------+
+| id | name   | version |
++----+--------+---------+
+|  1 | abba   |       0 |
+|  2 | acdc   |       0 |
+|  3 | boston |       0 |
+|  4 | u2     |       0 |
++----+--------+---------+
+----
+
 
 
 
