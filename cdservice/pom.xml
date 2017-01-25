@@ -86,12 +86,11 @@
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>ejb</artifactId>
     </dependency>
-    <!-- Manually
+    <!-- Manually -->
     <dependency>
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>datasources</artifactId>
     </dependency>
-    -->
     <dependency>
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>jaxrs-jaxb</artifactId>
@@ -178,6 +177,6 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.wildfly-swarm>1.0.0.Final</version.wildfly-swarm>
+    <version.wildfly-swarm>2017.1.1</version.wildfly-swarm>
   </properties>
 </project>
