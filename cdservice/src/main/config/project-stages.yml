@@ -6,8 +6,8 @@ swarm:
         connection-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
         user-name: sa
         password: sa
-#      CatalogDS:
-#        driver-name: mysql
-#        connection-url: jdbc:mysql://localhost:3306/catalogdb
-#        user-name: mysql
-#        password: mysql
+      CatalogDS:
+        driver-name: mysql
+        connection-url: jdbc:mysql://localhost:3306/catalogdb
+        user-name: mysql
+        password: mysql
