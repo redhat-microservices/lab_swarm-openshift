@@ -1,0 +1,8 @@
+swarm:
+  datasources:
+    data-sources:
+      CatalogDS:
+        driver-name: mysql
+        connection-url: jdbc:mysql://mysql-default.192.168.99.101.xip.io/catalogdb
+        user-name: mysql
+        password: mysql
