@@ -1,0 +1,23 @@
+spec:
+  template:
+    spec:
+      containers:
+        - readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          env:
+            - name: JAVA_OPTIONS
+              value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml -Dswarm.project.stage=openshift"
+      volumes:
+        - configMap:
+            name: ${project.artifactId}
+            items:
+            - key: "project-stages.yml"
+              path: "project-stages.yml"
+          name: config

@@ -1,3 +1,5 @@
+project:
+  stage: default
 swarm:
   datasources:
     data-sources:
@@ -6,6 +8,7 @@ swarm:
         connection-url: jdbc:mysql://localhost:3306/catalogdb
         user-name: mysql
         password: mysql
+
   # ds:
   #   name: CatalogDS
   #   password: mysql
