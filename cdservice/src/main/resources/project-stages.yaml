@@ -6,3 +6,8 @@ swarm:
         connection-url: jdbc:mysql://localhost:5000/catalogdb
         user-name: mysql
         password: mysql
+    jdbc-drivers:
+      mysql:
+        driver-class-name: com.mysql.jdbc.Driver
+        xa-datasource-name: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+        driver-module-name: com.mysql
