@@ -114,19 +114,25 @@ cd $currentDir
 
 [source]
 ----
+# Setup JBoss Forge & Addons
+bew install jboss-forge
 forge
+addon-install --coordinate io.fabric8.forge:devops,2.3.88
+addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
+
 # create the CD Catalog Service project
 # ----------------  CD Catalog Service [:8080/rest] ---------------
 project-new --named cdservice --stack JAVA_EE_7
 
 # Define PostgreSQL DB
-jpa-setup --jpa-provider hibernate --db-type POSTGRES --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
+jpa-setup --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
 
 jpa-new-entity --named Catalog
-jpa-new-field --named artist
-jpa-new-field --named description --length 2000
-jpa-new-field --named price --type java.lang.Float
-jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE
+jpa-new-field --named artist --target-entity org.cdservice.model.Catalog
+jpa-new-field --named title --target-entity org.cdservice.model.Catalog
+jpa-new-field --named description --length 2000 --target-entity org.cdservice.model.Catalog
+jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice.model.Catalog
+jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 
 scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
@@ -153,20 +159,50 @@ cd ~~
 cd ..
 ----
 
-# Project
+# Externalize Front Service
 
-- Open 2 terminal in order to start the front & backend
-- cd `cdservice`
+- Create service.json file under webapp folder & define the following key/value
 
-  mvn wildfly-swarm:run
+  { "cd-service": "http://localhost:8080/rest/catalogs/" }
 
-- cd `cdstorefront`
+- Add a config.js file within the directory scripts containing a $http.get request to access the content
+  of the json file & fetch the key `cd-service`. This key will contain the hostname or service name to be accessed
 
-  mvn wildfly-swarm:run
+[source]
+----
+angular.module('cdservice').factory('config', function ($http, $q) {
+  var deferred = $q.defer();
+  var apiUrl = null;
+  $http.get("service.json")
+    .success(function (data) {
+      console.log("Resource : " + data['cd-service'] + ':CatalogId');
+      deferred.resolve(data['cd-service']);
+      apiUrl = data['cd-service'];
+    })
+    .error(function () {
+      deferred.reject('could not find service.json ....');
+    });
 
-- Open project within your browser `http://localhost:8081/index.html`
+  return {
+    promise: deferred.promise,
+    getApiUrl: function () {
+      return apiUrl;
+    }
+  };
+});
+----
 
-# Test MySQL DB
+- Modify the `scripts/services/CatalogFactory.js` to use the fucntion `config` instead of the hard coded value
+
+[source]
+----
+  return $resource(config.getApiUrl() + ':CatalogId', { CatalogId: '@id' }, {
+----
+
+# Database
+
+- Install the OpenShift MySQL Template
+- Next, check if the Database is up and alive
 
 [source]
 ----
@@ -188,6 +224,27 @@ mysql> SELECT t.* FROM catalogdb.Catalog t;
 |  4 | u2     |       0 |
 +----+--------+---------+
 ----
+
+- Forward the traffic from the service to the host using `port-forwarding` command
+
+[source]
+----
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc port-forward $pod 3306:3306
+----
+
+# Test project locally
+
+- Open 2 terminal in order to start the front & backend
+- cd `cdservice`
+
+  mvn wildfly-swarm:run
+
+- cd `cdstorefront`
+
+  mvn wildfly-swarm:run
+
+- Open project within your browser `http://localhost:8081/index.html`
 
 
 

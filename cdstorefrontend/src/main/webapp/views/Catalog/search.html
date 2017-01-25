@@ -10,12 +10,33 @@
 <div>
     <h3>Search for Catalogs</h3>
     <form id="CatalogSearch" class="form-horizontal">
-        
 
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Name</label>
+        <label for="artist" class="col-sm-2 control-label">Artist</label>
         <div class="col-sm-10">
-            <input id="name" name="name" class="form-control" type="text" ng-model="search.name" placeholder="Enter the Catalog Name"></input>
+            <input id="artist" name="artist" class="form-control" type="text" ng-model="search.artist" placeholder="Enter the Catalog Artist"></input>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="description" class="col-sm-2 control-label">Description</label>
+        <div class="col-sm-10">
+            <input id="description" name="description" class="form-control" type="text" ng-model="search.description" placeholder="Enter the Catalog Description"></input>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="price" class="col-sm-2 control-label">Price</label>
+        <div class="col-sm-10">
+            <input id="price" name="price" class="form-control" type="text" ng-model="search.price" placeholder="Enter the Catalog Price"></input>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label for="title" class="col-sm-2 control-label">Title</label>
+        <div class="col-sm-10">
+            <input id="title" name="title" class="form-control" type="text" ng-model="search.title" placeholder="Enter the Catalog Title"></input>
         </div>
     </div>
 
@@ -32,12 +53,20 @@
         <table class="table table-responsive table-bordered table-striped clearfix">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Artist</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Publication Date</th>
+                    <th>Title</th>
                 </tr>
             </thead>
             <tbody id="search-results-body">
                 <tr ng-repeat="result in filteredResults | startFrom:currentPage*pageSize | limitTo:pageSize">
-                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.name}}</a></td>
+                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.artist}}</a></td>
+                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.description}}</a></td>
+                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.price}}</a></td>
+                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.publicationDate| date:'mediumDate'}}</a></td>
+                    <td><a href="#/Catalogs/edit/{{result.id}}">{{result.title}}</a></td>
                 </tr>
             </tbody>
         </table>

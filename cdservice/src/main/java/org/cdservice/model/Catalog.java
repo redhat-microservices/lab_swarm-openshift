@@ -8,6 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @XmlRootElement
@@ -18,12 +21,22 @@ public class Catalog implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
-	@Version
-	@Column(name = "version")
-	private int version;
 
 	@Column
-	private String name;
+	private String artist;
+
+	@Column(length = 2000)
+	private String description;
+
+	@Column
+	private Float price;
+
+	@Column
+	@Temporal(TemporalType.DATE)
+	private Date publicationDate;
+
+	@Column
+	private String title;
 
 	public Long getId() {
 		return this.id;
@@ -31,14 +44,6 @@ public class Catalog implements Serializable {
 
 	public void setId(final Long id) {
 		this.id = id;
-	}
-
-	public int getVersion() {
-		return this.version;
-	}
-
-	public void setVersion(final int version) {
-		this.version = version;
 	}
 
 	@Override
@@ -66,19 +71,61 @@ public class Catalog implements Serializable {
 		return result;
 	}
 
-	public String getName() {
-		return name;
+	public String getArtist() {
+		return artist;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setArtist(String artist) {
+		this.artist = artist;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Float getPrice() {
+		return price;
+	}
+
+	public void setPrice(Float price) {
+		this.price = price;
+	}
+
+	public Date getPublicationDate() {
+		return publicationDate;
+	}
+
+	public void setPublicationDate(Date publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	@Override
 	public String toString() {
 		String result = getClass().getSimpleName() + " ";
-		if (name != null && !name.trim().isEmpty())
-			result += "name: " + name;
+		if (id != null)
+			result += "id: " + id;
+		if (artist != null && !artist.trim().isEmpty())
+			result += ", artist: " + artist;
+		if (description != null && !description.trim().isEmpty())
+			result += ", description: " + description;
+		if (price != null)
+			result += ", price: " + price;
+		if (publicationDate != null)
+			result += ", publicationDate: " + publicationDate;
+		if (title != null && !title.trim().isEmpty())
+			result += ", title: " + title;
 		return result;
 	}
 }
