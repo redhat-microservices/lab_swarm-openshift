@@ -13,7 +13,7 @@
       <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
     </properties>
   </persistence-unit>-->
-  <persistence-unit name="cdservice-postgresql-unit" transaction-type="JTA">
+  <persistence-unit name="cdservice-persistence-unit" transaction-type="JTA">
     <description>Forge Persistence Unit</description>
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:jboss/datasources/CatalogDS</jta-data-source>
