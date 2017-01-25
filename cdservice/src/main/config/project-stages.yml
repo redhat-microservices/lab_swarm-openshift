@@ -1,0 +1,8 @@
+swarm:
+  datasources:
+    data-sources:
+      CatalogDS:
+        driver-name: mysql
+        connection-url: jdbc:mysql://localhost:3306/catalogdb
+        user-name: mysql
+        password: mysql

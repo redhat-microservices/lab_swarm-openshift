@@ -3,11 +3,6 @@ metadata:
 data:
   project-stages.yml: |-
 project:
-      stage: default
-logger:
-      level: DEBUG
----
-project:
       stage: openshift
 swarm:
   datasources:
@@ -17,3 +12,8 @@ swarm:
         connection-url: jdbc:mysql://mysql:3306/catalogdb
         user-name: mysql
         password: mysql
+---
+project:
+      stage: default
+logger:
+      level: DEBUG

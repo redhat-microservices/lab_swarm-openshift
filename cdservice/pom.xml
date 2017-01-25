@@ -118,6 +118,19 @@
   </dependencies>
   <profiles>
     <profile>
+      <id>local</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/config</directory>
+          </resource>
+          <resource>
+            <directory>src/main/resources</directory>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+    <profile>
       <id>kit</id>
       <activation />
       <build>
