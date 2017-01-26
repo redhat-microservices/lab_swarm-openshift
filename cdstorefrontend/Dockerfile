@@ -6,7 +6,7 @@ ADD . /opt/app-root/src/
 EXPOSE 8080
 
 # Set ENV var used to access the backend
-ENV URL http://cdservice-snowcamp.192.168.99.101.xip.io
+ENV URL http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs
 ENV PORT 8080
 
 # The CMD. We do the following here:
