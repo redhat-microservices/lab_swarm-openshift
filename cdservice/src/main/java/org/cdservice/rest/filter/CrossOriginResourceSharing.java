@@ -1,4 +1,4 @@
-package org.cdservice.rest;
+package org.cdservice.rest.filter;
 
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -6,9 +6,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 
 @Provider
-public class NewCrossOriginResourceSharingFilter
-		implements
-			ContainerResponseFilter {
+public class CrossOriginResourceSharing implements ContainerResponseFilter {
 
 	@Override
 	public void filter(ContainerRequestContext request,
