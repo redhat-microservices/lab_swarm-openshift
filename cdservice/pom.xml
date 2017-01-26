@@ -57,16 +57,19 @@
     </plugins>
   </build>
   <dependencies>
+    <!--
+        <dependency>
+          <groupId>javax</groupId>
+          <artifactId>javaee-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        -->
+    <!-- Manually -->
     <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-<!--    <dependency>
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>ejb</artifactId>
-    </dependency>-->
-    <!-- Manually -->
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>datasources</artifactId>
@@ -79,11 +82,8 @@
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>jpa</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.fabric8</groupId>
-      <artifactId>fabric8-arquillian</artifactId>
-      <scope>test</scope>
-    </dependency>
+
+    <!-- Persistence -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-jpamodelgen</artifactId>
@@ -100,6 +100,13 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.40</version>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>fabric8-arquillian</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <profiles>
@@ -197,14 +204,8 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>javax</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>7.0</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
         <groupId>org.wildfly.swarm</groupId>
-        <artifactId>bom</artifactId>
+        <artifactId>bom-all</artifactId>
         <version>${version.wildfly-swarm}</version>
         <type>pom</type>
         <scope>import</scope>
