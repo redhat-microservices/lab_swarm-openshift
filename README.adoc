@@ -304,7 +304,8 @@ oc login -u admin -p admin
 oc project default
 
 oc new-project snowcamp
-oc new-app --template=mysql-ephemeral       -p MYSQL_USER=mysql       -p MYSQL_PASSWORD=mysql       -p MYSQL_DATABASE=catalogdb
+oc new-app --template=mysql-ephemeral -p MYSQL_USER=mysql -p MYSQL_PASSWORD=mysql -p MYSQL_DATABASE=catalogdb
+sleep 5
 
 cd cdstorefrontend
 oc new-build --binary --name=cdfrontend -l app=cdfrontend
@@ -313,6 +314,8 @@ oc start-build cdfrontend --from-dir=. --follow
 oc new-app cdfrontend -l app=cdfrontend
 oc env dc/cdfrontend URL=http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs
 #oc env dc/cdfrontend URL=http://cdservice-snowcamp.172.28.128.4.xip.io/rest/catalogs
+oc env dc/cdfrontend OS_SUBDOMAIN=192.168.99.101.xip.io
+oc env dc/cdfrontend OS_PROJECT=snowcamp
 oc env dc/cdfrontend PORT=8080
 oc expose service cdfrontend
 
