@@ -1,1 +1,1 @@
-{ "cd-service": process.env.URL }
+{ "cd-service": "URL" }
