@@ -73,6 +73,10 @@ oc is now configured to use the cluster.
 Run this command to use the cluster:
 oc login --username=admin --password=admin
 
+or
+
+oc cluster up --create-machine --docker-machine=openshift --version=v1.4.1
+oc cluster up --docker-machine=openshift --version=v1.4.1
 ----
 
 Next, we will provide more rights for the admin `default` user in order to let it to access the different projects/namespaces to manage the resources.
@@ -202,12 +206,18 @@ angular.module('cdservice').factory('config', function ($http, $q) {
 # Database
 
 - Install the OpenShift MySQL Template
+
+  oc new-app --template=mysql-ephemeral \
+      -p MYSQL_USER=mysql \
+      -p MYSQL_PASSWORD=mysql \
+      -p MYSQL_DATABASE=catalogdb
+
 - Next, check if the Database is up and alive
 
 [source]
 ----
-export uuid=$(oc get pod | grep mysql | awk '{print $1}')
-oc rsh $uuid
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc rsh $pod
 mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $HOSTNAME $MYSQL_DATABASE
 
 mysql> connect catalogdb;
@@ -225,7 +235,7 @@ mysql> SELECT t.* FROM catalogdb.Catalog t;
 +----+--------+---------+
 ----
 
-- Insert some records
+- Insert some records (if the table has been created !)
 
 [source]
 ----
@@ -260,6 +270,28 @@ oc port-forward $pod 3306:3306
   mvn wildfly-swarm:run
 
 - Open project within your browser `http://localhost:8081/index.html`
+
+# Deployment on OpenShift
+
+- cd Frontend which is a Node application
+
+  cd cdfrontend
+  oc new-project snowcamp
+  oc delete dc,svc,route,bc,imagestream cdfrontend
+  oc new-build --binary --name=cdfrontend -l app=cdfrontend
+  npm install
+  oc start-build cdfrontend --from-dir=. --follow
+  oc env dc/cdfrontend URL=http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs
+  oc env dc/cdfrontend PORT=8080
+  oc new-app cdfrontend -l app=cdfrontend
+  oc expose service cdfrontend
+
+- cd backend
+
+  cd cdservice
+  mvn clean package
+  mvn fabric8:resource fabric8:build -Popenshift
+  mvn fabric8:resource -Popenshift
 
 
 
