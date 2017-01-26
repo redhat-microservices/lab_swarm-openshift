@@ -291,7 +291,7 @@ oc port-forward $pod 3306:3306
   cd cdservice
   mvn clean package
   mvn fabric8:resource fabric8:build -Popenshift
-  mvn fabric8:resource -Popenshift
+  mvn fabric8:deploy -Popenshift
 
 
 
