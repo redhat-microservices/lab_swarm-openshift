@@ -5,13 +5,11 @@ ADD . /opt/app-root/src/
 
 EXPOSE 8080
 
-# Set ENV var used to access the backend
-ENV URL http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs
-ENV PORT 8080
+ENV BACKEND_URL $URL
 
 # The CMD. We do the following here:
 #  - Start the server via npm start.
 USER root
-RUN cd public && sed -i.orig service.json -e 's|URL|'"$URL"'|' && cd ..
+RUN cd public && sed -i.orig service.json -e 's|URL|'"$BACKEND_URL"'|' && cd ..
 
 CMD /bin/bash -c 'npm start'
