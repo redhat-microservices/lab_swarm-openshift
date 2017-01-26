@@ -40,6 +40,28 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <images>
+            <image>
+              <name>cdfrontend:${project.version}</name>
+              <build>
+                <from>registry.access.redhat.com/openshift3/nodejs-010-rhel7</from>
+                <maintainer>cmoulliard@redhat.com</maintainer>
+                <tags>
+                  <tag>latest</tag>
+                  <tag>${project.version}</tag>
+                </tags>
+                <ports>
+                  <port>8080</port>
+                </ports>
+                <assembly>
+                  <basedir>src/main/resources</basedir>
+                  <targetDir>/opt/app-root/src/</targetDir>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
       </plugin>
     </plugins>
   </build>
