@@ -1,22 +1,24 @@
 package org.cdservice;
 
-import org.cdservice.rest.CatalogEndpoint;
-import org.cdservice.rest.RestApplication;
-import org.cdservice.rest.filter.CrossOriginResourceSharing;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
+import org.wildfly.swarm.undertow.WARArchive;
 
 public class Main {
     public static void main(String... args) throws Exception {
-        final Swarm container = new Swarm();
-        container.start();
+        final Swarm swarm = new Swarm();
 
         JAXRSArchive jar = ShrinkWrap.create(JAXRSArchive.class);
-        jar.addResource(RestApplication.class);
-        jar.addResource(CatalogEndpoint.class);
-        jar.addResource(CrossOriginResourceSharing.class);
-        container.start();
-        container.deploy(jar);
+        jar.addPackages(true,Main.class.getPackage());
+        swarm.start();
+
+        // Repackage the project as a WAR
+        WARArchive war = ShrinkWrap.create(WARArchive.class);
+        war.addPackages(true,Main.class.getPackage());
+        war.addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml", Main.class.getClassLoader()), "classes/META-INF/persistence.xml");
+
+        swarm.deploy(war);
     }
 }
