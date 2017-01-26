@@ -16,11 +16,10 @@ sleep 5
 
 cd cdstorefrontend
 oc new-build --binary --name=cdfrontend -l app=cdfrontend
-#npm install
+npm install
 oc start-build cdfrontend --from-dir=. --follow
 oc new-app cdfrontend -l app=cdfrontend
 oc env dc/cdfrontend BACKEND_URL=http://cdservice-snowcamp.$HOST_IP.xip.io/rest/catalogs/
-#oc env dc/cdfrontend URL=http://cdservice-snowcamp.172.28.128.4.xip.io/rest/catalogs/
 oc env dc/cdfrontend PORT=8080
 oc env dc/cdfrontend OS_SUBDOMAIN=$HOST_IP.xip.io
 oc env dc/cdfrontend OS_PROJECT=snowcamp

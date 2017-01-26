@@ -15,8 +15,19 @@
  * limitations under the License.
  */
 
-var express = require('express')
+var express = require('express');
+var replace = require("replace");
 var app = express();
+
+
+// Replace Backend URL
+replace({
+  regex: "URL",
+  replacement: process.env.BACKEND_URL,
+  paths: ['public/service.json'],
+  recursive: false,
+  silent: true
+});
 
 // Serve all static files
 app.use(express.static('public'));

@@ -9,6 +9,7 @@
   "author": "cmoulliard@redhat.com",
   "license": "Apache-2.0",
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "replace": "^0.3.0"
   }
 }
