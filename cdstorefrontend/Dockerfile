@@ -11,6 +11,7 @@ ENV PORT 8080
 
 # The CMD. We do the following here:
 #  - Start the server via npm start.
-CMD  sed -i.orig public/service.json \
-             -e 's|URL|'"$URL"'|'
-     && /bin/bash -c 'npm start'
+USER root
+RUN cd public && sed -i.orig service.json -e 's|URL|'"$URL"'|' && cd ..
+
+CMD /bin/bash -c 'npm start'
