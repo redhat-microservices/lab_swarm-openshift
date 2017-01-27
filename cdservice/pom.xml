@@ -114,20 +114,6 @@
     </dependency>
   </dependencies>
   <profiles>
-<!--    <profile>
-      <id>local-war</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/config</directory>
-          </resource>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-        </plugins>
-      </build>
-    </profile>-->
     <profile>
       <id>local</id>
       <build>
