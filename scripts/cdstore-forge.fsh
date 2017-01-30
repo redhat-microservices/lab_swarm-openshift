@@ -18,21 +18,30 @@ jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE 
 scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
 wildfly-swarm-setup
-wildfly-swarm-detect-fractions --depend --build
+#wildfly-swarm-detect-fractions --depend --build
 
-cd cdservice
+# Add CORS REST Filter class
 rest-new-cross-origin-resource-sharing-filter
+
+# Return to the root of the cdservice
+cd ~~
+
+# Inject Fabric8 Maven plugin
 fabric8-setup
+
+# Return to the parent project
+
 cd ..
 
 # ----------------  Book Store Web Front End [:8081/rest] ---------------
 # Now we want to create front end swarm service to access CD Catalog Service
-project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
-wildfly-swarm-add-fraction --fractions undertow
-mv ../cdservice/src/main/webapp/ src/main/
+project-new --named cdstorefrontend
+
+#wildfly-swarm-add-fraction --fractions undertow
+#mv ../cdservice/src/main/webapp/ src/main/
 
 # Keep empty src/main/webapp/WEB-INF
-mkdir ../cdservice/src/main/webapp
-mkdir ../cdservice/src/main/webapp/WEB-INF
+#mkdir ../cdservice/src/main/webapp
+#mkdir ../cdservice/src/main/webapp/WEB-INF
 
 cd ..

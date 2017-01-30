@@ -135,7 +135,7 @@ All in one
 
 [source]
 ----
-forge -e "run
+forge -e "run scripts/cdstore.fsh"
 ----
 
 - Create the parent maven project where we will design the Front and the backend modules
