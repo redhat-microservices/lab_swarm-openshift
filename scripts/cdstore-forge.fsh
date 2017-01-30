@@ -1,5 +1,5 @@
-# Add parent project (chech with Geirge how to change artefactId)
-project-new --named snowcamp --final-name project --type parent --top-level-package org.cdstore
+mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
+mv project snowcamp && cd snowcamp
 
 # create the CD Catalog Service project
 # ----------------  CD Catalog Service [:8080/rest] ---------------

@@ -1,0 +1,15 @@
+{
+  "name": "cdfrontend",
+  "version": "1.0.0",
+  "description": "frontend to access microservices",
+  "main": "index.js",
+  "scripts": {
+    "start": "node frontend.js"
+  },
+  "author": "cmoulliard@redhat.com",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.13.4",
+    "replace": "^0.3.0"
+  }
+}
