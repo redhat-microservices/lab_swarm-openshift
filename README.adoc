@@ -27,7 +27,7 @@ https://github.com/minishift/minishift
 
 # Setup OpenShift
 
-We will configure the VM on the machine using Virtualbox as Hypervisor, the version 1.4 of OpenShift
+We will configure the VM on the machine using Virtualbox as Hypervisor, the version 1.4.1 of OpenShift
 
 [source]
 ----
@@ -75,7 +75,7 @@ oc login --username=admin --password=admin
 
 or
 
-oc cluster up --create-machine --docker-machine=openshift --version=v1.4.1
+oc cluster up --docker-machine=openshift --version=v1.4.1 --create-machine
 oc cluster up --docker-machine=openshift --version=v1.4.1
 ----
 
@@ -84,7 +84,7 @@ This step is only required if you use the new Minishift client (> 1.0.0.Beta2)
 
 [source]
 ----
-oc login https://192.168.99.101:8443 -u system:admin
+oc login https://HOST_IP:8443 -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin admin
 oc login -u admin -p admin
 oc project default
@@ -114,15 +114,33 @@ for f in quickstart-templates/*.json; do cat $f | oc create -n openshift -f -; d
 cd $currentDir
 ----
 
+# Goals
+
+The goal of this project is to create a Microservices application that we will deploy within a virtualized environment managed by OpenShift.
+The project will contain 3 modules; a web static Front end, a backend service exposed by WildFly Swarm & a MySQL database.
+
+Each module will be packaged and deployed as a Docker image in OpenShift. The OpenShift tooling as S2I build will be used for that purpose as the Fabric8 Maven Plaugin.
+They both, as Kubernetes/OpneShift clients allows to access the platform in order to issue the commands allowing to build/deploy & run a pod.
+
+The project will be created using a Java IDE "IntelliJ, JBoss Developer Studio" tool while JBoss Forge will help us to design the Java application in order to:
+- Create the REST Service
+- Modelize the JPA Entity & the model
+- Scaffold the AngularJS application
+
 # Create project
+
+We will follow the following steps in order to create the maven projects with the modules. Some prerequisites are required like JBoss Forge.
 
 [source]
 ----
 # Setup JBoss Forge & Addons
-bew install jboss-forge
+brew install jboss-forge
 forge
 addon-install --coordinate io.fabric8.forge:devops,2.3.88
 addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
+
+# Add parent project (chech with Geirge how to change artefactId)
+project-new --named snowcamp --final-name project --type parent --top-level-package org.cdstore
 
 # create the CD Catalog Service project
 # ----------------  CD Catalog Service [:8080/rest] ---------------
