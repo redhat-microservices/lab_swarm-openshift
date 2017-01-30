@@ -131,6 +131,15 @@ The project will be created using a Java IDE "IntelliJ, JBoss Developer Studio" 
 
 We will follow the following steps in order to create the maven projects with the modules. Some prerequisites are required like JBoss Forge.
 
+All in one
+
+[source]
+----
+forge -e "run
+----
+
+- Create the parent maven project where we will design the Front and the backend modules
+
 [source]
 ----
 # Setup JBoss Forge & Addons
@@ -161,7 +170,6 @@ scaffold-generate --provider AngularJS --generate-rest-resources --targets org.c
 wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 
-exit
 cd cdservice
 rest-new-cross-origin-resource-sharing-filter
 fabric8-setup
