@@ -20,7 +20,6 @@ scaffold-generate --provider AngularJS --generate-rest-resources --targets org.c
 wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 
-exit
 cd cdservice
 rest-new-cross-origin-resource-sharing-filter
 fabric8-setup
