@@ -1,6 +1,3 @@
-mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
-mv project snowcamp && cd snowcamp
-
 # create the CD Catalog Service project
 # ----------------  CD Catalog Service [:8080/rest] ---------------
 project-new --named cdservice --stack JAVA_EE_7
@@ -30,18 +27,4 @@ cd ~~
 fabric8-setup
 
 # Return to the parent project
-
-cd ..
-
-# ----------------  Book Store Web Front End [:8081/rest] ---------------
-# Now we want to create front end swarm service to access CD Catalog Service
-project-new --named cdstorefrontend
-
-#wildfly-swarm-add-fraction --fractions undertow
-#mv ../cdservice/src/main/webapp/ src/main/
-
-# Keep empty src/main/webapp/WEB-INF
-#mkdir ../cdservice/src/main/webapp
-#mkdir ../cdservice/src/main/webapp/WEB-INF
-
 cd ..

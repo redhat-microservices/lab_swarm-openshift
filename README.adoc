@@ -15,8 +15,8 @@ you will need to install the following on your machine:
 - [x] http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[JDK 1.8]
 - [x] https://maven.apache.org/download.cgi[Maven 3.3.6 or higher]
 - [x] https://www.virtualbox.org/wiki/Downloads[Virtualbox 5.0 or higher]
-- [] https://github.com/minishift/minishift[Minishift 1.0.0.Beta2]
-- [x] https://github.com/minishift/minishift/releases/tag/v0.9.0[Minishift 0.9.0]
+- [] https://github.com/minishift/minishift[Minishift 1.0.0.Beta3]
+- [] https://github.com/openshift/origin/releases/tag/v1.4.1[OpenShift Client 1.4.1]
 - [x] http://developers.redhat.com/products/devstudio/download/?referrer=jbd[JBoss Developer Studio 10 (optional)]
 
 # Installation of Minishift
@@ -135,18 +135,37 @@ All in one
 
 [source]
 ----
+mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
+mv project snowcamp && cd snowcamp
+
+brew install jboss-forge
+forge
+addon-install --coordinate io.fabric8.forge:devops,2.3.88
+addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
+
 forge -e "run scripts/cdstore.fsh"
+
+echo # ----------------  Book Store Web Front End [:8081/rest] ---------------
+echo # Now we want to create front end swarm service to access CD Catalog Service
+mkdir cdstorefrontend
+cp scripts/front cdstorefrontend
 ----
 
 - Create the parent maven project where we will design the Front and the backend modules
 
 [source]
 ----
+mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
+mv project snowcamp && cd snowcamp
+
 # Setup JBoss Forge & Addons
 brew install jboss-forge
 forge
 addon-install --coordinate io.fabric8.forge:devops,2.3.88
 addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
+
+forge -e "run scripts/cdstore.fsh"
+----
 
 # Add parent project (chech with Geirge how to change artefactId)
 project-new --named snowcamp --final-name project --type parent --top-level-package org.cdstore

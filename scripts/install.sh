@@ -45,6 +45,8 @@ oc env dc/cdfrontend OS_PROJECT=snowcamp
 oc expose service cdfrontend
 
 cd ../cdservice
+cp ././scripts/import.sql src/main/config-openshift
+
 mvn clean package
 mvn fabric8:deploy -Popenshift
 
