@@ -2,10 +2,13 @@
 
 #
 # Script responsible to setup the project
-# IT alos allow to install using brew jboss-forge and the addons required
+# It also allow to install using brew jboss-forge and the addons required
 #
-# command to be used at the root of the project cloned
-# ./setup.sh install-forge
+# command to be used at the root of the project cloned to setup the project and install Forge
+# ./scripts/setup.sh install-forge
+#
+# To just setup the poject
+# ./scripts/setup.sh
 
 CURRENT=$(pwd)
 
@@ -25,10 +28,15 @@ forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 echo # ----------------  CD Store Web Front End [:8081/rest] ---------------
 echo # Now we want to create front end swarm service to access CD Catalog Service
 # mkdir -p cdfront/public
-#
 # cp -r $CURRENT/scripts/front/ cdfront
 
+cp -r $CURRENT/scripts/front/public/ cdfront/src/main/webapp
+
 echo # ---------------- Project created ------------------
-pwd && ls -la
+PROJECT=$(pwd)
 
 cd $CURRENT
+
+echo # ----------------  Launch IntelliJ  ---------------
+idea $PROJECT
+
