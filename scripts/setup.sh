@@ -22,11 +22,11 @@ fi
 
 forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 
-echo # ----------------  Book Store Web Front End [:8081/rest] ---------------
+echo # ----------------  CD Store Web Front End [:8081/rest] ---------------
 echo # Now we want to create front end swarm service to access CD Catalog Service
-mkdir -p cdfront/public
-
-cp -r $CURRENT/scripts/front/ cdfront
+# mkdir -p cdfront/public
+#
+# cp -r $CURRENT/scripts/front/ cdfront
 
 echo # ---------------- Project created ------------------
 pwd && ls -la
