@@ -17,7 +17,9 @@ if [[ -n $1 ]]; then
   # HOST_IP=$(docker-machine ip openshift)
 
   # Issue with minishift 1.0.0.Beta3
-  minishift start --memory=4000 --vm-driver=virtualbox --iso-url=https://github.com/minishift/minishift-centos-iso/releases/download/v1.0.0-rc.1/minishift-centos7.iso --docker-env=[storage-driver=devicemapper]
+  ISO_URL=https://github.com/minishift/minishift-centos-iso/releases/download/v1.0.0-beta.1/minishift-centos.iso
+  #ISO_URL=https://github.com/minishift/minishift-centos-iso/releases/download/v1.0.0-rc.1/minishift-centos7.iso
+  minishift start --memory=4000 --vm-driver=virtualbox --iso-url=$ISO_URL --docker-env=[storage-driver=devicemapper]
 
   # minishift start --memory=4000 --vm-driver=virtualbox
   HOST_IP=$(minishift ip)
