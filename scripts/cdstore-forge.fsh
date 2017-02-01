@@ -23,7 +23,7 @@ rest-new-cross-origin-resource-sharing-filter
 # Return to the root of the cdservice
 cd ~~
 
-# Inject Fabric8 Maven plugin
+# Install Fabric8 Maven plugin
 fabric8-setup
 
 # Return to the parent project
@@ -32,7 +32,14 @@ cd ..
 # ----------------  CD Store Web Front End [:8081/rest] ---------------
 # Now we want to create front end swarm service to access BookService
 project-new --named cdfront --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
+
+# Install Fabric8 Maven plugin
+fabric8-setup
+
+# Add undertow fraction
 wildfly-swarm-add-fraction --fractions undertow
+
+# Move and copy resources
 mv ../cdservice/src/main/webapp/ src/main/
 
 # Keep empty src/main/webapp/WEB-INF
