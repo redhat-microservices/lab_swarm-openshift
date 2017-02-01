@@ -29,15 +29,15 @@ fabric8-setup
 # Return to the parent project
 cd ..
 
-# ----------------  Book Store Web Front End [:8081/rest] ---------------
+# ----------------  CD Store Web Front End [:8081/rest] ---------------
 # Now we want to create front end swarm service to access BookService
 project-new --named cdfront --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
 wildfly-swarm-add-fraction --fractions undertow
 mv ../cdservice/src/main/webapp/ src/main/
 
 # Keep empty src/main/webapp/WEB-INF
-mkdir ../bookservice/src/main/webapp
-mkdir ../bookservice/src/main/webapp/WEB-INF
+mkdir ../cdservice/src/main/webapp
+mkdir ../cdservice/src/main/webapp/WEB-INF
 
 cd ~~
 cd ..
