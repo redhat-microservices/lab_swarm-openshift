@@ -9,7 +9,7 @@
 
   <modules>
     <module>cdservice</module>
-    <module>cdstorefrontend</module>
+   <!-- <module>cdfront</module>-->
   </modules>
 
 </project>
