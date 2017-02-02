@@ -203,7 +203,7 @@ wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 ----
 
--- Add Datasource fraction
+- Add Datasource fraction
 [source]
 ----
 wildfly-swarm-add-fraction --fractions datasources
@@ -252,23 +252,26 @@ cd ..
       </plugin>
 ----
 
+- Create the store front project
+[source]
+----
 # ----------------  CD Store Web Front End [:8081/rest] ---------------
 # Now we want to create front end swarm service to access CD Catalog Service
 project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
 wildfly-swarm-add-fraction --fractions undertow
+----
+
+- Copy resouces and scripts
+[source]
+----
 mv ../cdservice/src/main/webapp/ src/main/
 
 # Keep empty src/main/webapp/WEB-INF
 mkdir ../cdservice/src/main/webapp
 mkdir ../cdservice/src/main/webapp/WEB-INF
-
-cd ~~
-cd ..
 ----
 
-#  Fabric8 Maven Plugin modifications
-
-- Change the version from 3.2.9 to 3.1.92
+- Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
 - Add the generator wildfly-swarm that we will use
 
 [source]
@@ -297,7 +300,9 @@ cd ..
       </plugin>
 ----
 
-- Deploy on Openshift `fabric8:deploy`
+- Deploy on Openshift using the `fabric8:deploy` maven goal
+
+  mvn fabric8:deploy
 
 # Externalize Front Service
 
