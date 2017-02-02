@@ -12,10 +12,11 @@ jpa-new-field --named description --length 2000 --target-entity org.cdservice.mo
 jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice.model.Catalog
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 
-scaffold-setup --provider AngularJS
+rest-generate-endpoints-from-entities --targets org.cdservice.model.*
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
+
 wildfly-swarm-setup
-#wildfly-swarm-detect-fractions --depend --build
+wildfly-swarm-detect-fractions --depend --build
 
 # Add CORS REST Filter class
 rest-new-cross-origin-resource-sharing-filter
