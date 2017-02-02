@@ -18,7 +18,7 @@ scaffold-generate --provider AngularJS --generate-rest-resources --targets org.c
 wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 
-project-add-dependencies org.wildfly.swarm:datasources
+#project-add-dependencies org.wildfly.swarm:datasources
 project-add-dependencies mysql:mysql-connector-java:5.1.40
 
 # Add CORS REST Filter class
@@ -49,6 +49,13 @@ mv ../cdservice/src/main/webapp/ src/main/
 # Keep empty src/main/webapp/WEB-INF
 mkdir ../cdservice/src/main/webapp
 mkdir ../cdservice/src/main/webapp/WEB-INF
+
+cp -r ./front/public/ ../cdfront/src/main/webapp
+cp -r ./scripts/front/fabric8 ../cdfront/src/main/fabric8
+
+# Copy Service Fabric8 files
+cp -r ./service/fabric8 ../cdservice/src/main/fabric8
+# cp -r ./import.sql ../cdservice/src/main/resources
 
 cd ~~
 cd ..

@@ -203,10 +203,10 @@ wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 ----
 
-- Add Datasource fraction
+- Add MySQL Driver
 [source]
 ----
-wildfly-swarm-add-fraction --fractions datasources
+project-add-dependencies mysql:mysql-connector-java:5.1.40
 ----
 
 - As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
@@ -261,10 +261,11 @@ project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --htt
 wildfly-swarm-add-fraction --fractions undertow
 ----
 
-- Copy resouces and scripts
+- Copy resources and scripts
 [source]
 ----
 mv ../cdservice/src/main/webapp/ src/main/
+
 
 # Keep empty src/main/webapp/WEB-INF
 mkdir ../cdservice/src/main/webapp
@@ -309,6 +310,7 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 - Create service.json file under webapp folder & define the following key/value
 
   { "cd-service": "http://localhost:8080/rest/catalogs/" }
+  { "cd-service": "http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs/" }
 
 - Add a config.js file within the directory scripts containing a $http.get request to access the content
   of the json file & fetch the key `cd-service`. This key will contain the hostname or service name to be accessed
@@ -337,20 +339,18 @@ angular.module('cdservice').factory('config', function ($http, $q) {
 });
 ----
 
-- Modify the `scripts/services/CatalogFactory.js` to use the fucntion `config` instead of the hard coded value
+- Modify the `scripts/services/CatalogFactory.js` to use the function `config` instead of the hard coded value
 
 [source]
 ----
   return $resource(config.getApiUrl() + ':CatalogId', { CatalogId: '@id' }, {
 ----
 
-- Deploy the front
-[source]
-----
-mvn fabric8:deploy
-----
+- Edit the app.html page to add the new script externalizing the URL
 
-- Add a service.yml under src/main/fabric8 where the target port is 8081
+    <script src="scripts/services/config.js"></script>
+
+- Add a svc.yml under src/main/fabric8 where the target port is 8081 in order to create a service
 [source]
 ----
 apiVersion: v1
@@ -365,11 +365,30 @@ spec:
   type: ClusterIP
 ----
 
-- Redeploy the front
+- Create a route.yml file under src/main/fabric8 to tell to Openshift to create a route
 [source]
 ----
-mvn fabric8:deploy fabric8:undeploy
+apiVersion: v1
+kind: Route
+metadata:
+  name: ${project.artifactId}
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: ${project.artifactId}
 ----
+
+- Deploy the cdfront project
+[source]
+----
+mvn fabric8:deploy
+----
+
+- Check that you can access the HTML page of the Front
+
+  http://cdfront-snowcamp.192.168.99.119.xip.io/
 
 # Database
 
@@ -481,8 +500,7 @@ oc new-build --binary --name=cdfrontend -l app=cdfrontend
 #npm install
 oc start-build cdfrontend --from-dir=. --follow
 oc new-app cdfrontend -l app=cdfrontend
-oc env dc/cdfrontend URL=http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs
-#oc env dc/cdfrontend URL=http://cdservice-snowcamp.172.28.128.4.xip.io/rest/catalogs
+oc env dc/cdfrontend URL=http://cdservice-snowcamp.192.168.99.101.xip.io/rest/catalogs/
 oc env dc/cdfrontend OS_SUBDOMAIN=192.168.99.101.xip.io
 oc env dc/cdfrontend OS_PROJECT=snowcamp
 oc env dc/cdfrontend PORT=8080

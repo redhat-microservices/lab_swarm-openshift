@@ -25,20 +25,8 @@ fi
 
 forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 
-echo # ----------------  CD Store Web Front End [:8081/rest] ---------------
-echo # Now we want to create front end swarm service to access CD Catalog Service
-# mkdir -p cdfront/public
-# cp -r $CURRENT/scripts/front/ cdfront
-
-cp -r $CURRENT/scripts/front/public/ cdfront/src/main/webapp
-cp -r $CURRENT/scripts/front/fabric8 cdfront/src/main/fabric8
-
-# Copy Service Fabric8 files
-cp -r $CURRENT/scripts/service/fabric8 cdservice/src/main/fabric8
-
 echo # ---------------- Project created ------------------
 PROJECT=$(pwd)
-
 cd $CURRENT
 
 echo # ----------------  Launch IntelliJ  ---------------
