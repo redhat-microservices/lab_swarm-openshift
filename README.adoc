@@ -131,24 +131,21 @@ The project will be created using a Java IDE "IntelliJ, JBoss Developer Studio" 
 
 We will follow the following steps in order to create the maven projects with the modules. Some prerequisites are required like JBoss Forge.
 
-All in one
+## All in one
 
 [source]
 ----
-mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
-mv project snowcamp && cd snowcamp
+./scritpts/create_vm.sh
 
-brew install jboss-forge
-forge
-addon-install --coordinate io.fabric8.forge:devops,2.3.88
-addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
+ ./scripts/setup.sh
+----
 
-forge -e "run scripts/cdstore.fsh"
+## Decomposed steps
 
-echo # ----------------  Book Store Web Front End [:8081/rest] ---------------
-echo # Now we want to create front end swarm service to access CD Catalog Service
-mkdir cdstorefrontend
-cp scripts/front cdstorefrontend
+- Open a terminal and next create the snowcamp project
+[source]
+----
+mkdir snowcamp
 ----
 
 - Create the parent maven project where we will design the Front and the backend modules
@@ -157,44 +154,103 @@ cp scripts/front cdstorefrontend
 ----
 mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
 mv project snowcamp && cd snowcamp
-
-# Setup JBoss Forge & Addons
-brew install jboss-forge
-forge
-addon-install --coordinate io.fabric8.forge:devops,2.3.88
-addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1
-
-forge -e "run scripts/cdstore.fsh"
 ----
 
-# Add parent project (chech with Geirge how to change artefactId)
-project-new --named snowcamp --final-name project --type parent --top-level-package org.cdstore
-
-# create the CD Catalog Service project
-# ----------------  CD Catalog Service [:8080/rest] ---------------
+- Next create the `cdservice` maven module usign the following forge command where the stack to be used is Java EE
+[source]
+----
 project-new --named cdservice --stack JAVA_EE_7
+----
 
+- Setup the JPA entity and the Hibernate persistence file. Define the persistence unit and datasource
+[source]
+----
 # Define PostgreSQL DB
 jpa-setup --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
+[source]
+----
 
+- Create a Catalog entity class with the folloing fields
+[source]
+----
 jpa-new-entity --named Catalog
 jpa-new-field --named artist --target-entity org.cdservice.model.Catalog
 jpa-new-field --named title --target-entity org.cdservice.model.Catalog
 jpa-new-field --named description --length 2000 --target-entity org.cdservice.model.Catalog
 jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice.model.Catalog
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
+----
 
+- Generate the REST endpoints
+[source]
+----
+rest-generate-endpoints-from-entities --targets org.cdservice.model.*
+----
+
+- Use the Forge scaffold command to generate the AngularJS content able to map the screens with the CRUD services exposed by the REST service
+[source]
+----
 scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
+----
+
+- Setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
+[source]
+----
 wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
+----
 
+-- Add Datasource fraction
+[source]
+----
+wildfly-swarm-add-fraction --fractions datasources
+----
+
+- As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
+[source]
+----
 cd cdservice
 rest-new-cross-origin-resource-sharing-filter
+----
+
+- Now, we will like for Swarm setup the project as a Fabric8 project
+[source]
+----
 fabric8-setup
 cd ..
+----
 
-# ----------------  Book Store Web Front End [:8081/rest] ---------------
+- Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
+- Add the generator wildfly-swarm that we will use
+
+[source]
+----
+<plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-maven-plugin</artifactId>
+        <version>3.1.92</version>
+        <executions>
+          <execution>
+            <id>fmp</id>
+            <goals>
+              <goal>resource</goal>
+              <goal>helm</goal>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <generator>
+            <includes>
+              <include>wildfly-swarm</include>
+            </includes>
+          </generator>
+        </configuration>
+      </plugin>
+----
+
+# ----------------  CD Store Web Front End [:8081/rest] ---------------
 # Now we want to create front end swarm service to access CD Catalog Service
 project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
 wildfly-swarm-add-fraction --fractions undertow
@@ -207,6 +263,39 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 cd ~~
 cd ..
 ----
+
+#  Fabric8 Maven Plugin modifications
+
+- Change the version from 3.2.9 to 3.1.92
+- Add the generator wildfly-swarm that we will use
+
+[source]
+----
+<plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-maven-plugin</artifactId>
+        <version>3.1.92</version>
+        <executions>
+          <execution>
+            <id>fmp</id>
+            <goals>
+              <goal>resource</goal>
+              <goal>helm</goal>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <generator>
+            <includes>
+              <include>wildfly-swarm</include>
+            </includes>
+          </generator>
+        </configuration>
+      </plugin>
+----
+
+- Deploy on Openshift `fabric8:deploy`
 
 # Externalize Front Service
 
@@ -246,6 +335,33 @@ angular.module('cdservice').factory('config', function ($http, $q) {
 [source]
 ----
   return $resource(config.getApiUrl() + ':CatalogId', { CatalogId: '@id' }, {
+----
+
+- Deploy the front
+[source]
+----
+mvn fabric8:deploy
+----
+
+- Add a service.yml under src/main/fabric8 where the target port is 8081
+[source]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${project.artifactId}
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8081
+  type: ClusterIP
+----
+
+- Redeploy the front
+[source]
+----
+mvn fabric8:deploy fabric8:undeploy
 ----
 
 # Database
@@ -367,6 +483,9 @@ oc expose service cdfrontend
 cd ../cdservice
 mvn clean package
 mvn fabric8:deploy -Popenshift
+
+mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
+mv project snowcamp && cd snowcamp
 
 
 
