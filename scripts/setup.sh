@@ -25,10 +25,16 @@ fi
 
 forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 
-echo # ---------------- Project created ------------------
-PROJECT=$(pwd)
-cd $CURRENT
+# Copy Resources scripts
+cp -rf $CURRENT/scripts/front/public  cdfront/src/main/webapp
+cp -rf $CURRENT/scripts/front/fabric8  cdfront/src/main/fabric8
+
+# Copy Service Fabric8 & SQL files
+cp -rf $CURRENT/scripts/service/fabric8 cdservice/src/main/fabric8
+cp $CURRENT/scripts/import.sql cdservice/src/main/resources
 
 echo # ----------------  Launch IntelliJ  ---------------
+PROJECT=$(pwd)
+
 idea $PROJECT
 

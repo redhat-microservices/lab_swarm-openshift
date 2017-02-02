@@ -50,12 +50,5 @@ mv ../cdservice/src/main/webapp/ src/main/
 mkdir ../cdservice/src/main/webapp
 mkdir ../cdservice/src/main/webapp/WEB-INF
 
-cp -r ./front/public/ ../cdfront/src/main/webapp
-cp -r ./scripts/front/fabric8 ../cdfront/src/main/fabric8
-
-# Copy Service Fabric8 files
-cp -r ./service/fabric8 ../cdservice/src/main/fabric8
-# cp -r ./import.sql ../cdservice/src/main/resources
-
 cd ~~
 cd ..
