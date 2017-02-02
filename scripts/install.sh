@@ -5,7 +5,7 @@
 #
 # The command './scripts/install.sh cluster' will :
 # 1) Create a new minishift instance/VM in VirtualBox
-# 2) Install/Deploy docker/openshift
+# 2) Install/Deploy docker + openshift
 # 3) Build & deploy the front/service
 #
 
@@ -13,9 +13,9 @@ set -e
 
 if [[ -n $1 ]]; then
   source ./create_vm.sh
-else
-  HOST_IP=$(minishift ip)
 fi
+
+HOST_IP=$(minishift ip)
 
 echo "========================================="
 echo "Log on to OpenShift"
