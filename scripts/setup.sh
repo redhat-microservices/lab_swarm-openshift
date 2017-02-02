@@ -7,7 +7,7 @@
 # command to be used at the root of the project cloned to setup the project and install Forge
 # ./scripts/setup.sh install-forge
 #
-# To just setup the poject
+# To just setup the project
 # ./scripts/setup.sh
 
 CURRENT=$(pwd)
@@ -31,6 +31,10 @@ echo # Now we want to create front end swarm service to access CD Catalog Servic
 # cp -r $CURRENT/scripts/front/ cdfront
 
 cp -r $CURRENT/scripts/front/public/ cdfront/src/main/webapp
+cp -r $CURRENT/scripts/front/fabric8 cdfront/src/main/fabric8
+
+# Copy Service Fabric8 files
+cp -r $CURRENT/scripts/service/fabric8 cdservice/src/main/fabric8
 
 echo # ---------------- Project created ------------------
 PROJECT=$(pwd)
