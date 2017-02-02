@@ -181,6 +181,8 @@ jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 ----
 
+- Add the MySQL Database Driver & the
+
 - Generate the REST endpoints
 [source]
 ----
@@ -407,13 +409,6 @@ INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VAL
 INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
 ----
 
-- Forward the traffic from the service to the host using `port-forwarding` command
-
-[source]
-----
-export pod=$(oc get pod | grep mysql | awk '{print $1}')
-oc port-forward $pod 3306:3306
-----
 
 # Test project locally
 
@@ -431,6 +426,14 @@ oc port-forward $pod 3306:3306
   mvn wildfly-swarm:run
 
 - Open project within your browser `http://localhost:8081/index.html`
+
+- Forward the traffic from the service to the host using `port-forwarding` command
+
+[source]
+----
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc port-forward $pod 3306:3306
+----
 
 # Deployment on OpenShift
 
@@ -455,7 +458,7 @@ oc port-forward $pod 3306:3306
   mvn fabric8:resource fabric8:build -Popenshift
   mvn fabric8:deploy -Popenshift
 
-- All Steps
+# All Steps
 
 oc cluster up --docker-machine=openshift --version=v1.4.1 --use-existing-config=true
 

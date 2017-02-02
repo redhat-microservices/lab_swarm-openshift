@@ -3,7 +3,7 @@
 #
 # Prerequisite : install minishift 1.0.0.Beta3
 #
-# The command './scripts/install.sh cluster' will :
+# The command './scripts/install-openshift.sh cluster' will :
 # 1) Create a new minishift instance/VM in VirtualBox
 # 2) Install/Deploy docker + openshift
 # 3) Build & deploy the front/service
