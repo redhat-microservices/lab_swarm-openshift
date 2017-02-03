@@ -23,18 +23,18 @@ if [[ -n $1 ]]; then
  forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1"
 fi
 
-forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
+forge -e "run $CURRENT/cdstore-forge.fsh"
 
 # Copy Resources scripts
-echo "Copy resources to $(pwd)"
-TARGETDIR=$(pwd)
-echo "cp -rf $CURRENT/scripts/front/public cdfront/src/main/webapp"
-cp -rf $CURRENT/scripts/front/public/ $TARGETDIR/cdfront/src/main/webapp
-cp -rf $CURRENT/scripts/front/fabric8/ $TARGETDIR/cdfront/src/main/fabric8
-
-# Copy Service Fabric8 & SQL files
-cp -rf $CURRENT/scripts/service/fabric8/ $TARGETDIR/cdservice/src/main/fabric8
-cp $CURRENT/scripts/import.sql $TARGETDIR/cdservice/src/main/resources
+# echo "Copy resources to $(pwd)"
+# TARGETDIR=$(pwd)
+# echo "cp -rf $CURRENT/scripts/front/public cdfront/src/main/webapp"
+# cp -rf $CURRENT/scripts/front/public/ $TARGETDIR/cdfront/src/main/webapp
+# cp -rf $CURRENT/scripts/front/fabric8/ $TARGETDIR/cdfront/src/main/fabric8
+#
+# # Copy Service Fabric8 & SQL files
+# cp -rf $CURRENT/scripts/service/fabric8/ $TARGETDIR/cdservice/src/main/fabric8
+# cp $CURRENT/scripts/service/import.sql $TARGETDIR/cdservice/src/main/resources
 
 echo # ----------------  Launch IntelliJ  ---------------
 PROJECT=$(pwd)
