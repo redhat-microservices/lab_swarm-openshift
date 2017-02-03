@@ -26,12 +26,15 @@ fi
 forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 
 # Copy Resources scripts
-cp -rf $CURRENT/scripts/front/public  cdfront/src/main/webapp
-cp -rf $CURRENT/scripts/front/fabric8  cdfront/src/main/fabric8
+echo "Copy resources to $(pwd)"
+TARGETDIR=$(pwd)
+echo "cp -rf $CURRENT/scripts/front/public cdfront/src/main/webapp"
+cp -rf $CURRENT/scripts/front/public/ $TARGETDIR/cdfront/src/main/webapp
+cp -rf $CURRENT/scripts/front/fabric8/ $TARGETDIR/cdfront/src/main/fabric8
 
 # Copy Service Fabric8 & SQL files
-cp -rf $CURRENT/scripts/service/fabric8 cdservice/src/main/fabric8
-cp $CURRENT/scripts/import.sql cdservice/src/main/resources
+cp -rf $CURRENT/scripts/service/fabric8/ $TARGETDIR/cdservice/src/main/fabric8
+cp $CURRENT/scripts/import.sql $TARGETDIR/cdservice/src/main/resources
 
 echo # ----------------  Launch IntelliJ  ---------------
 PROJECT=$(pwd)
