@@ -134,13 +134,13 @@ to use it.
 
 ## Decomposed steps
 
-- Open a terminal and next create the snowcamp project
+. Open a terminal and next create the snowcamp project
 [source]
 ----
 mkdir snowcamp
 ----
 
-- Create the parent maven project where we will design the Front and the backend modules
+. Create the parent maven project where we will design the Front and the backend modules
 
 [source]
 ----
