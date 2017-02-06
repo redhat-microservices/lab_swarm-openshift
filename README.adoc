@@ -418,11 +418,11 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 . Open 2 terminal in order to start the front & backend
 . cd `cdservice`
 
-  mvn wildfly-swarm:run
+  mvn wildfly-swarm:run -Plocal
 
 . cd `cdstorefront`
 
-  mvn wildfly-swarm:run -Plocal
+  mvn wildfly-swarm:run
 
 . Open project within your browser `http://localhost:8081/index.html`
 
