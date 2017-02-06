@@ -346,18 +346,17 @@ swarm:
     </profile>
 ----
 
-. Move the dependency from the pom.xml within the `openshift` profile as the MySQL database will only be used when the project will be deployed on OpenShift.
+. Move the `MySQL Maven dependency` from the pom.xml within the `openshift` profile as the MySQL database will only be used when the project will be deployed on OpenShift.
 +
 [source]
 ----
 ...
-<dependencies>
-  <dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <version>1.4.192</version>
-  </dependency>
-</dependencies>
+    <!-- Manually -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.40</version>
+    </dependency>
 ----
 
 ### Store Front end
