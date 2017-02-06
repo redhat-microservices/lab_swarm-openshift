@@ -359,7 +359,7 @@ swarm:
     </dependency>
 ----
 
-. To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders
+. To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders of your project
 +
 [source]
 ----
