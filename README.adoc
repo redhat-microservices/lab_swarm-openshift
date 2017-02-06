@@ -92,6 +92,7 @@ cd $currentDir
 # Goals
 
 The goal of this lab is to :
+
 - Create a Microservices Java application that we will deploy within a virtualized environment managed by OpenShift,
 - Externalize the configuration using https://kubernetes.io/docs/user-guide/configmap/[Kubernetes Config Map],
 - Package/Deploy the project in OpenShift,
