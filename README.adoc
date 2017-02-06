@@ -158,7 +158,7 @@ mv project snowcamp && cd snowcamp
 project-new --named cdservice --stack JAVA_EE_7
 ----
 
-. Setup the JPA project where the provider used is `Hibernate`, the database `MYSQL` which corresponds to the dialect to be configured within the persistence file of Hibernate
+. Setup the JPA project where the provider used is `Hibernate`, the database `MYSQL` which corresponds to the dialect to be configured within the persistence file of Hibernate.
   Specify also the datasource and the persistent-unit name. All these parameters will be used by the Forge addon to populate the file persistence.xml under the directory META-INF
 +
 [source]
@@ -168,7 +168,8 @@ jpa-setup --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss
 [source]
 ----
 
-. Create a Catalog entity class with the folloing fields
+. Create a Catalog Java (but also entity) class where the fields will be defined as such. It is not required to define the field with the PRIMARY key as it will be created
+  by default by the JBoss Forge command.
 +
 [source]
 ----
@@ -180,15 +181,25 @@ jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 ----
 
-. Add the MySQL Database Driver & the
-. Generate the REST endpoints
+. As we target to communicate with a MySQL Databae, the mysql JDBC Java driver should be added to the pom definition of the module
+  using this command
++
+[source]
+----
+project-add-dependencies mysql:mysql-connector-java:5.1.40
+----
+
+. As we would like to expose our Catalog of CDs as a Service published behind a REST endopiint, we will use another +JBoss Forge command responsible
+  to create a Rest Application and the Rest Service.
 +
 [source]
 ----
 rest-generate-endpoints-from-entities --targets org.cdservice.model.*
 ----
 
-. Use the Forge scaffold command to generate the AngularJS content able to map the screens with the CRUD services exposed by the REST service
+. We are almost set. The last step of this module section will consist to use this JBoss Forge scaffold command.
+  This command will populate the Web Front end which is a JavaScript AngularJS 1 project. This Front contains the screens
+  required to perform the CRUD operations by calling the REST service `http://myservice.com/rest/catalogs`
 +
 [source]
 ----
@@ -196,7 +207,8 @@ scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
 ----
 
-. Setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
+. As we want that our `cdservice` can be bootstrapped using the WildFly Swarm Java Microservices container, we will issue this Jboss Forge command
+  which will setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
 +
 [source]
 ----
@@ -204,12 +216,6 @@ wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 ----
 
-. Add MySQL Driver
-+
-[source]
-----
-project-add-dependencies mysql:mysql-connector-java:5.1.40
-----
 
 . As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
 +
@@ -219,7 +225,7 @@ cd cdservice
 rest-new-cross-origin-resource-sharing-filter
 ----
 
-. Now, we will like for Swarm setup the project as a Fabric8 project
+. Now, we will add the Fabric8 Maven Plugin which is our client to comminicate with OpenShift by issuying this command
 +
 [source]
 ----
