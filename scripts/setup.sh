@@ -2,7 +2,7 @@
 
 #
 # Script responsible to setup the project
-# It also allow to install using brew jboss-forge and the addons required
+# It also allows to install using brew jboss-forge and the addons required
 #
 # command to be used at the root of the project cloned to setup the project and install Forge
 # ./scripts/setup.sh install-forge
@@ -23,7 +23,7 @@ if [[ -n $1 ]]; then
  forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1"
 fi
 
-forge -e "run $CURRENT/cdstore-forge.fsh"
+forge -e "run $CURRENT/scripts/cdstore-forge.fsh"
 
 # Copy Resources scripts
 # echo "Copy resources to $(pwd)"
