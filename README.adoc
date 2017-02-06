@@ -117,13 +117,18 @@ The project will be developed using Java IDE Tool like "IntelliJ, JBoss Develope
 # Project creation
 
 We will follow the following steps in order to create the maven project containing the modules of our application. Some prerequisites are required like JBoss Forge.
+The first to be done is to git clone locally the project
+
+  git clone https://github.com/redhat-microservices/lab_swarm-openshift.git
+  cd lab_swarm-openshift
 
 ## All in one
 
+The following script (if you want) can help you to setup the full project in one step. We invite you to first look to the decomposed steps in order to build the project step-by-step before
+to use it.
+
 [source]
 ----
-./scritpts/create_vm.sh
-
  ./scripts/setup.sh
 ----
 
