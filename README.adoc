@@ -155,7 +155,7 @@ mv project snowcamp && cd snowcamp
 
 . Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE. JBoss Forge will create
   a new maven module, configure the pom.xml file. The following command must be executed within the Forge shell or by passing the command using this convention
-  `forge -e "run ...."`
+  `forge -e "..."` where `...` correspobds to a Forge command.
 +
 [source]
 ----
