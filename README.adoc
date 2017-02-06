@@ -269,8 +269,10 @@ cd ..
 
 ### Configure the datasource
 
-. To be able to play with the project locally, add a folder `src/main/config` containing a `project-stages.yaml` file
-. Configure the datasource to use H2 in-memory database with `ExampleDS` as datasource name
+. To be able to use the project locally or on OpenShift, we will define different datasources and JDBC driver.
+  Aadd a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
+  that WildFly Swarm will use when Hibernate to try to call the database.
+. Configure the datasource to use the H2 in-memory database with `ExampleDS` as datasource name
 +
 [source]
 ----
@@ -289,7 +291,8 @@ swarm:
 #        password: mysql
 ----
 
-. Next, Copy/paste the generated persistence.xml file under the folder src/main/config/META-INF and change the datasource name like the dialect to be used
+. Next, Copy/paste the generated persistence.xml file under the folder `src/main/config/META-INF` and change the datasource name like the dialect to be used
+  within the persistence file.
 +
 [source]
 ----
@@ -297,8 +300,8 @@ swarm:
 <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
 ----
 
-. Define a profile within the `pom.xml` file where we will tell to maven to copy the `src/main/config` content to the target folder `src/main/resources`
-  Specify alo the h2 database dependency
+. Define a maven profile within the `pom.xml` file where we will tell to maven to copy the `src/main/config` content to the target folder `src/main/resources`
+  when the project will be compiled. Declare also the h2 database dependency
 +
 [source]
 ----
@@ -324,7 +327,7 @@ swarm:
     </profile>
 ----
 
-. Move the `persistence.xml` file from the src/main/resources directory to the directory `src/main/config-openshift/META-INF`
+. Move the `persistence.xml` file from the `src/main/resources` directory to the target directory `src/main/config-openshift/META-INF`
 . Create another profile called `openshift`
 +
 [source]
