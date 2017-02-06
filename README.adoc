@@ -269,7 +269,94 @@ cd ..
 
 ### Configure the datasource
 
-[TODO]
+. To be able to play with the project locally, add a folder `src/main/config` containing a `project-stages.yaml` file
+. Configure the datasource to use H2 in-memory database with `ExampleDS` as datasource name
++
+[source]
+----
+swarm:
+  datasources:
+    data-sources:
+      ExampleDS:
+        driver-name: h2
+        connection-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        user-name: sa
+        password: sa
+#      CatalogDS:
+#        driver-name: mysql
+#        connection-url: jdbc:mysql://localhost:3306/catalogdb
+#        user-name: mysql
+#        password: mysql
+----
+
+. Next, Copy/paste the generated persistence.xml file under the folder src/main/config/META-INF and change the datasource name like the dialect to be used
++
+[source]
+----
+<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+----
+
+. Define a profile within the `pom.xml` file where we will tell to maven to copy the `src/main/config` content to the target folder `src/main/resources`
+  Specify alo the h2 database dependency
++
+[source]
+----
+ <profile>
+      <id>local</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/config</directory>
+          </resource>
+          <resource>
+            <directory>src/main/resources</directory>
+          </resource>
+        </resources>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>1.4.192</version>
+        </dependency>
+      </dependencies>
+    </profile>
+----
+
+. Move the `persistence.xml` file from the src/main/resources directory to the directory `src/main/config-openshift/META-INF`
+. Create another profile called `openshift`
++
+[source]
+----
+<profile>
+      <id>openshift</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/config-openshift</directory>
+          </resource>
+          <resource>
+            <directory>src/main/resources</directory>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+----
+
+. Move the dependency from the pom.xml within the `openshift` profile as the MySQL database will only be used when the project will be deployed on OpenShift.
++
+[source]
+----
+...
+<dependencies>
+  <dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <version>1.4.192</version>
+  </dependency>
+</dependencies>
+----
 
 ### Store Front end
 
@@ -324,9 +411,24 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 
 ## Build and deploy
 
+### Build and run locally
+
+. Open 2 terminal in order to start the front & backend
+. cd `cdservice`
+
+  mvn wildfly-swarm:run
+
+. cd `cdstorefront`
+
+  mvn wildfly-swarm:run
+
+. Open project within your browser `http://localhost:8081/index.html`
+
+### Deploy on OpenShift
+
 ### Setup My SQL Database
 
-. Install the OpenShift MySQL Template
+. Crate the MySQL application using the OpenShift MySQL Template
 +
 [source]
 ----
@@ -349,53 +451,9 @@ Connection id:    1628
 Current database: catalogdb
 
 mysql> SELECT t.* FROM catalogdb.Catalog t;
-+----+--------+---------+
-| id | name   | version |
-+----+--------+---------+
-|  1 | abba   |       0 |
-|  2 | acdc   |       0 |
-|  3 | boston |       0 |
-|  4 | u2     |       0 |
-+----+--------+---------+
 ----
 
-. Insert some records (if the table has been created !)
-+
-[source]
-----
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (1,"ACDC","Australian hard rock band", 15.0, '1980-07-25', "Back in Black");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (2,"Abba","Swedish pop music group", 12.0, '1976-10-11', "Arrival");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (3,"Coldplay","British rock band ", 17.0, '2008-07-12', "Viva la Vida");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (4,"U2","Irish rock band ", 18.0, '1987-03-09', "The Joshua Tree");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
-----
-
-
-
-
-### Build and run locally
-
-. Open 2 terminal in order to start the front & backend
-. cd `cdservice`
-
-  mvn wildfly-swarm:run
-
-. cd `cdstorefront`
-
-  mvn wildfly-swarm:run
-
-. Open project within your browser `http://localhost:8081/index.html`
-. Forward the traffic from the service to the host using `port-forwarding` command
-
-[source]
-----
-export pod=$(oc get pod | grep mysql | awk '{print $1}')
-oc port-forward $pod 3306:3306
-----
-
-### Deploy on Openshift
-
-. Verify first that you are well connected to openshift
+. Verify first that you are well connected to Openshift
 
   oc status
 
@@ -492,6 +550,26 @@ mvn fabric8:deploy
 
   http://cdfront-snowcamp.192.168.99.119.xip.io/
 
+### TO BE REVIEWED
+
+. Forward the traffic from the service to the host using `port-forwarding` command
+
+[source]
+----
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc port-forward $pod 3306:3306
+----
+
+. Insert some records (if the table has been created !)
++
+[source]
+----
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (1,"ACDC","Australian hard rock band", 15.0, '1980-07-25', "Back in Black");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (2,"Abba","Swedish pop music group", 12.0, '1976-10-11', "Arrival");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (3,"Coldplay","British rock band ", 17.0, '2008-07-12', "Viva la Vida");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (4,"U2","Irish rock band ", 18.0, '1987-03-09', "The Joshua Tree");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
+----
 
 
 
