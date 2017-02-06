@@ -267,19 +267,21 @@ cd ..
  </plugin>
 ----
 
+### Configure the datasource
+
+[TODO]
+
 ### Store Front end
 
-. Create the store front project
+. Create the store front project & setup WildFly Swarm. We will specify the HTTP Container to be used which is here Undertow
 +
 [source]
 ----
-# ----------------  CD Store Web Front End [:8081/rest] ---------------
-# Now we want to create front end swarm service to access CD Catalog Service
 project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
 wildfly-swarm-add-fraction --fractions undertow
 ----
 
-. Copy resources and scripts
+. As the web content has been created/populated previously, we will copy it here.
 +
 [source]
 ----
@@ -320,11 +322,92 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
       </plugin>
 ----
 
-. Deploy on OpenShift using the `fabric8:deploy` maven goal
+## Build and deploy
+
+### Setup My SQL Database
+
+. Install the OpenShift MySQL Template
++
+[source]
+----
+  oc new-app --template=mysql-ephemeral \
+      -p MYSQL_USER=mysql \
+      -p MYSQL_PASSWORD=mysql \
+      -p MYSQL_DATABASE=catalogdb
+----
+
+. Next, check if the Database is up and alive
++
+[source]
+----
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc rsh $pod
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $HOSTNAME $MYSQL_DATABASE
+
+mysql> connect catalogdb;
+Connection id:    1628
+Current database: catalogdb
+
+mysql> SELECT t.* FROM catalogdb.Catalog t;
++----+--------+---------+
+| id | name   | version |
++----+--------+---------+
+|  1 | abba   |       0 |
+|  2 | acdc   |       0 |
+|  3 | boston |       0 |
+|  4 | u2     |       0 |
++----+--------+---------+
+----
+
+. Insert some records (if the table has been created !)
++
+[source]
+----
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (1,"ACDC","Australian hard rock band", 15.0, '1980-07-25', "Back in Black");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (2,"Abba","Swedish pop music group", 12.0, '1976-10-11', "Arrival");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (3,"Coldplay","British rock band ", 17.0, '2008-07-12', "Viva la Vida");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (4,"U2","Irish rock band ", 18.0, '1987-03-09', "The Joshua Tree");
+INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
+----
+
+
+
+
+### Build and run locally
+
+. Open 2 terminal in order to start the front & backend
+. cd `cdservice`
+
+  mvn wildfly-swarm:run
+
+. cd `cdstorefront`
+
+  mvn wildfly-swarm:run
+
+. Open project within your browser `http://localhost:8081/index.html`
+. Forward the traffic from the service to the host using `port-forwarding` command
+
+[source]
+----
+export pod=$(oc get pod | grep mysql | awk '{print $1}')
+oc port-forward $pod 3306:3306
+----
+
+### Deploy on Openshift
+
+. Verify first that you are well connected to openshift
+
+  oc status
+
+. Create the snowcamp namespace/project
+
+  oc new-project snowcamp
+
+. Deploy on OpenShift using the cd front and the cd service using the `fabric8:deploy` maven goal
 
   mvn fabric8:deploy
 
-# Externalize Front Service
+## Externalize Front Service
 
 - Create service.json file under webapp folder & define the following key/value
 
@@ -399,7 +482,7 @@ spec:
     name: ${project.artifactId}
 ----
 
-- Deploy the cdfront project
+- Deploy the cd front project
 [source]
 ----
 mvn fabric8:deploy
@@ -408,78 +491,6 @@ mvn fabric8:deploy
 - Check that you can access the HTML page of the Front
 
   http://cdfront-snowcamp.192.168.99.119.xip.io/
-
-# Database
-
-- Install the OpenShift MySQL Template
-
-  oc new-app --template=mysql-ephemeral \
-      -p MYSQL_USER=mysql \
-      -p MYSQL_PASSWORD=mysql \
-      -p MYSQL_DATABASE=catalogdb
-
-- Next, check if the Database is up and alive
-
-[source]
-----
-export pod=$(oc get pod | grep mysql | awk '{print $1}')
-oc rsh $pod
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $HOSTNAME $MYSQL_DATABASE
-
-mysql> connect catalogdb;
-Connection id:    1628
-Current database: catalogdb
-
-mysql> SELECT t.* FROM catalogdb.Catalog t;
-+----+--------+---------+
-| id | name   | version |
-+----+--------+---------+
-|  1 | abba   |       0 |
-|  2 | acdc   |       0 |
-|  3 | boston |       0 |
-|  4 | u2     |       0 |
-+----+--------+---------+
-----
-
-- Insert some records (if the table has been created !)
-
-[source]
-----
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (1,"ACDC","Australian hard rock band", 15.0, '1980-07-25', "Back in Black");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (2,"Abba","Swedish pop music group", 12.0, '1976-10-11', "Arrival");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (3,"Coldplay","British rock band ", 17.0, '2008-07-12', "Viva la Vida");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (4,"U2","Irish rock band ", 18.0, '1987-03-09', "The Joshua Tree");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
-----
-
-
-# Test project locally
-
-- Open 2 terminal in order to start the front & backend
-- cd `cdservice`
-
-  npm install
-  export PORT=8081
-  export URL=http://localhost:8080/rest/catalogs
-
-  OpenShift URL : "http://cdstorefrontend-snowcamp.192.168.99.101.xip.io/rest/catalogs/"
-
-- cd `cdstorefront`
-
-  mvn wildfly-swarm:run
-
-- Open project within your browser `http://localhost:8081/index.html`
-
-- Forward the traffic from the service to the host using `port-forwarding` command
-
-[source]
-----
-export pod=$(oc get pod | grep mysql | awk '{print $1}')
-oc port-forward $pod 3306:3306
-----
-
-
-
 
 
 
