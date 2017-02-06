@@ -91,15 +91,17 @@ cd $currentDir
 
 # Goals
 
-The goal of this lab is to create a Microservices application that we will deploy within a virtualized environment managed by OpenShift.
-The project will contain 3 modules; a web static Front end, a backend service exposed by WildFly Swarm & a MySQL database.
+The goal of this lab is to create a Microservices Java application that we will deploy within a virtualized environment managed by OpenShift.
+The project will contain 3 modules; a web static Front end, a backend service exposed by the WildFly Swarm Java Container & a MySQL database.
+The JPA layer is managed by Hibernate with the help of the module WildFly JPA. The front end is a AngularJS application.
 
 Each module will be packaged and deployed as a Docker image on OpenShift. The OpenShift Source to Image Tool (= https://docs.openshift.com/enterprise/3.2/creating_images/s2i.html[S2I]) will be used for that purpose.
 It will use the Java S2I Docker image responsible to build the final Docker image of your project using the source code of the maven module uploaded to the openshift platform.
 This step will be performed using the https://maven.fabric8.io/[Fabric8 Maven Plugin]. This Maven plugin is a Java Kubernetes/OpenShift client able to communicate with the Openshift platform using the REST endpoints
 in order to issue the commands allowing to build aproject, deploy it and finally launch a docker process as a pod.
 
-The project will be created using a Java IDE "IntelliJ, JBoss Developer Studio" tool while JBoss Forge will help us to design the Java application in order to:
+The project will be developed using Java IDE Tool like "IntelliJ, JBoss Developer Studio" while the JBoss Forge tool will help us to design the Java application, add the required dependencies,
+ populate the Hibernate in order to:
 - Create the REST Service
 - Modelize the JPA Entity & the model
 - Scaffold the AngularJS application
