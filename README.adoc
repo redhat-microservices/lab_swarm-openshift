@@ -464,7 +464,102 @@ Current database: catalogdb
 mysql> SELECT t.* FROM catalogdb.Catalog t;
 ----
 
+### Externalize the Datasource
+
+[TODO] Describe what we will do here from a general point of view
+
+. Create under the directory `src/main/fabric8` of the `cdservice` maven module the `configmap.yml` file which contains the definition of the project-stages.yml
++
+[source]
+----
+metadata:
+  name: ${project.artifactId}
+data:
+  project-stages.yml: |-
+    swarm:
+      datasources:
+        data-sources:
+          CatalogDS:
+            driver-name: mysql
+            connection-url: jdbc:mysql://mysql:3306/catalogdb
+            user-name: mysql
+            password: mysql
+----
+
+Remark: Ad you can see, the hostname defined corresponds to the `mysql` service published on OpenShift. This name will be resolved by the internal DNS server exposed by OpenShift
+
+. Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
++
+[source]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${project.artifactId}
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8081
+  type: ClusterIP
+----
+
+. Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route
++
+[source]
+----
+apiVersion: v1
+kind: Route
+metadata:
+  name: ${project.artifactId}
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: ${project.artifactId}
+----
+
+. Map the configMap to a volume that OpenShift will mount/attach to the pod when it will be created. So, create a deploymentconfig.yml file
++
+[source]
+----
+spec:
+  template:
+    spec:
+      containers:
+        - volumeMounts:
+            - name: config
+              mountPath: /app/config
+          env:
+            - name: JAVA_OPTIONS
+              value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml"
+      volumes:
+        - configMap:
+            name: ${project.artifactId}
+            items:
+            - key: "project-stages.yml"
+              path: "project-stages.yml"
+          name: config
+----
+
+Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_OPTINOS parameter
+
+. Deploy the cd service project
++
+[source]
+----
+mvn fabric8:deploy
+----
+
+. Check that you can access the REST endpoint of the service. Remark : you can get the route address using the command `oc get route/cdservice-snowcamp`
+
+  http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs
+
+
 ### Externalize Front Service
+
+[TODO] Describe what we will do here from a general point of view
 
 . Create a `service.json` file under webapp folder of the cd front project & define the following key/value where the HOST address corresponds to the IP address used
   by your VM machine
@@ -568,7 +663,6 @@ mvn fabric8:deploy
 . Check that you can access the HTML page of the Front. Remark : you can get the route address using the command `oc get route/cdfront-snowcamp`
 
   http://cdfront-snowcamp.192.168.99.119.xip.io/
-
 
 
 ### TO BE REVIEWED
