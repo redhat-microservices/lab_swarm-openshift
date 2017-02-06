@@ -746,3 +746,10 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
 ----
 new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
 ----
+
+. Scale down the database, to see circuit breaker fallback
++
+[source]
+----
+oc scale --replicas=0 dc mysql
+----
