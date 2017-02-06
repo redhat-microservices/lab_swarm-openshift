@@ -134,6 +134,8 @@ to use it.
 
 ## Decomposed steps
 
+### Prent project
+
 . Open a terminal where we will create the snowcamp project
 . Create the parent maven project
 +
@@ -148,6 +150,8 @@ mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes \
                        -Dversion=1.0.0-SNAPSHOT
 mv project snowcamp && cd snowcamp
 ----
+
+### Catalog CD project
 
 . Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE. JBoss Forge will create
   a new maven module, configure the pom.xml file. The following command must be executed within the Forge shell or by passing the command using this convention
@@ -233,8 +237,9 @@ fabric8-setup
 cd ..
 ----
 
-. Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
-. Add the generator wildfly-swarm that we will use
+. As the JBoss Fabric Forge Addon used will creta a project using the latest version of the Fabric8 plugin which hasn't been tested for this lab,
+  We will Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92 like also specify the generator to be used.
+  Add the generator wildfly-swarm that we will use
 +
 [source]
 ----
@@ -261,6 +266,8 @@ cd ..
    </configuration>
  </plugin>
 ----
+
+### Store Front end
 
 . Create the store front project
 +
