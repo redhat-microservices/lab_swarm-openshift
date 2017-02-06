@@ -91,11 +91,13 @@ cd $currentDir
 
 # Goals
 
-The goal of this project is to create a Microservices application that we will deploy within a virtualized environment managed by OpenShift.
+The goal of this lab is to create a Microservices application that we will deploy within a virtualized environment managed by OpenShift.
 The project will contain 3 modules; a web static Front end, a backend service exposed by WildFly Swarm & a MySQL database.
 
-Each module will be packaged and deployed as a Docker image in OpenShift. The OpenShift tooling as S2I build will be used for that purpose as the Fabric8 Maven Plaugin.
-They both, as Kubernetes/OpneShift clients allows to access the platform in order to issue the commands allowing to build/deploy & run a pod.
+Each module will be packaged and deployed as a Docker image on OpenShift. The OpenShift Source to Image Tool (= https://docs.openshift.com/enterprise/3.2/creating_images/s2i.html[S2I]) will be used for that purpose.
+It will use the Java S2I Docker image responsible to build the final Docker image of your project using the source code of the maven module uploaded to the openshift platform.
+This step will be performed using the https://maven.fabric8.io/[Fabric8 Maven Plugin]. This Maven plugin is a Java Kubernetes/OpenShift client able to communicate with the Openshift platform using the REST endpoints
+in order to issue the commands allowing to build aproject, deploy it and finally launch a docker process as a pod.
 
 The project will be created using a Java IDE "IntelliJ, JBoss Developer Studio" tool while JBoss Forge will help us to design the Java application in order to:
 - Create the REST Service
