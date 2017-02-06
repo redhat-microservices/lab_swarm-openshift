@@ -104,7 +104,7 @@ The JPA layer is managed by Hibernate with the help of the module WildFly JPA. T
 
 Each module will be packaged and deployed as a Docker image on OpenShift. The OpenShift Source to Image Tool (= https://docs.openshift.com/enterprise/3.2/creating_images/s2i.html[S2I]) will be used for that purpose.
 It will use the Java S2I Docker image responsible to build the final Docker image of your project using the source code of the maven module uploaded to the openshift platform.
-This step will be performed using the https://maven.fabric8.io/[Fabric8 Maven Plugin]. This Maven plugin is a Java Kubernetes/OpenShift client able to communicate with the Openshift platform using the REST endpoints
+This step will be performed using the https://maven.fabric8.io/[Fabric8 Maven Plugin]. This Maven plugin is a Java Kubernetes/OpenShift client able to communicate with the OpenShift platform using the REST endpoints
 in order to issue the commands allowing to build aproject, deploy it and finally launch a docker process as a pod.
 
 The project will be developed using Java IDE Tool like "IntelliJ, JBoss Developer Studio" while the JBoss Forge tool will help us to design the Java application, add the required dependencies,
@@ -134,13 +134,8 @@ to use it.
 
 ## Decomposed steps
 
-. Open a terminal and next create the snowcamp project
-[source]
-----
-mkdir snowcamp
-----
-
-. Create the parent maven project where we will design the Front and the backend modules
+. Open a terminal where we will create the snowcamp project
+. Create the parent maven project
 +
 [source]
 ----
@@ -148,14 +143,15 @@ mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -Darchety
 mv project snowcamp && cd snowcamp
 ----
 
-. Next create the `cdservice` maven module usign the following forge command where the stack to be used is Java EE
+. Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE
 +
 [source]
 ----
 project-new --named cdservice --stack JAVA_EE_7
 ----
 
-- Setup the JPA entity and the Hibernate persistence file. Define the persistence unit and datasource
+. Setup the JPA entity and the Hibernate persistence file. Define the persistence unit and datasource
++
 [source]
 ----
 # Define PostgreSQL DB
@@ -163,7 +159,8 @@ jpa-setup --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss
 [source]
 ----
 
-- Create a Catalog entity class with the folloing fields
+. Create a Catalog entity class with the folloing fields
++
 [source]
 ----
 jpa-new-entity --named Catalog
@@ -174,51 +171,56 @@ jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 ----
 
-- Add the MySQL Database Driver & the
-
-- Generate the REST endpoints
+. Add the MySQL Database Driver & the
+. Generate the REST endpoints
++
 [source]
 ----
 rest-generate-endpoints-from-entities --targets org.cdservice.model.*
 ----
 
-- Use the Forge scaffold command to generate the AngularJS content able to map the screens with the CRUD services exposed by the REST service
+. Use the Forge scaffold command to generate the AngularJS content able to map the screens with the CRUD services exposed by the REST service
++
 [source]
 ----
 scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
 ----
 
-- Setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
+. Setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
++
 [source]
 ----
 wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 ----
 
-- Add MySQL Driver
+. Add MySQL Driver
++
 [source]
 ----
 project-add-dependencies mysql:mysql-connector-java:5.1.40
 ----
 
-- As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
+. As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
++
 [source]
 ----
 cd cdservice
 rest-new-cross-origin-resource-sharing-filter
 ----
 
-- Now, we will like for Swarm setup the project as a Fabric8 project
+. Now, we will like for Swarm setup the project as a Fabric8 project
++
 [source]
 ----
 fabric8-setup
 cd ..
 ----
 
-- Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
-- Add the generator wildfly-swarm that we will use
-
+. Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
+. Add the generator wildfly-swarm that we will use
++
 [source]
 ----
 <plugin>
@@ -245,7 +247,8 @@ cd ..
  </plugin>
 ----
 
-- Create the store front project
+. Create the store front project
++
 [source]
 ----
 # ----------------  CD Store Web Front End [:8081/rest] ---------------
@@ -254,7 +257,8 @@ project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --htt
 wildfly-swarm-add-fraction --fractions undertow
 ----
 
-- Copy resources and scripts
+. Copy resources and scripts
++
 [source]
 ----
 mv ../cdservice/src/main/webapp/ src/main/
@@ -265,9 +269,9 @@ mkdir ../cdservice/src/main/webapp
 mkdir ../cdservice/src/main/webapp/WEB-INF
 ----
 
-- Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
-- Add the generator wildfly-swarm that we will use
-
+. Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
+. Add the generator wildfly-swarm that we will use
++
 [source]
 ----
 <plugin>
@@ -294,7 +298,7 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
       </plugin>
 ----
 
-- Deploy on Openshift using the `fabric8:deploy` maven goal
+. Deploy on OpenShift using the `fabric8:deploy` maven goal
 
   mvn fabric8:deploy
 
@@ -358,7 +362,7 @@ spec:
   type: ClusterIP
 ----
 
-- Create a route.yml file under src/main/fabric8 to tell to Openshift to create a route
+- Create a route.yml file under src/main/fabric8 to tell to OpenShift to create a route
 [source]
 ----
 apiVersion: v1
