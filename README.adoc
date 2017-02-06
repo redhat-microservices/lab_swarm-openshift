@@ -61,27 +61,10 @@ Provisioning OpenShift via '/Users/chmoulli/.minishift/cache/oc/v1.4.0-rc1/oc [c
 
    To login as administrator:
        oc login -u system:admin
-
-OR
-
-minishift start --openshift-version=v1.4.0 --deploy-router --memory=4000 --vm-driver=virtualbox
-Starting local OpenShift cluster...
-Downloading OpenShift v1.4.0-rc1
- 65.86 MB / 65.86 MB [============================================================================================================================================================================================================================] 100.00% 0sDownloading OpenShift v1.4.0-rc1 checksums
- 0 B / 773 B [---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------]   0.00%
- 773 B / 773 B [==================================================================================================================================================================================================================================] 100.00% 0s
-oc is now configured to use the cluster.
-Run this command to use the cluster:
-oc login --username=admin --password=admin
-
-or
-
-oc cluster up --docker-machine=openshift --version=v1.4.1 --create-machine
-oc cluster up --docker-machine=openshift --version=v1.4.1
 ----
 
 Next, we will provide more rights for the admin `default` user in order to let it to access the different projects/namespaces to manage the resources.
-This step is only required if you use the new Minishift client (> 1.0.0.Beta2)
+This step is only required if you use the new Minishift client (>= 1.0.0.Beta3)
 
 [source]
 ----
@@ -91,17 +74,7 @@ oc login -u admin -p admin
 oc project default
 ----
 
-## Useful commands
-
-- Stop/start Minishift
-
-[source]
-----
-minishift stop
-minishift start
-----
-
-Optionally we can install the OpenShift templates in order to have some examples like WildFly Server, ....
+Remark : Optionally we can install the OpenShift templates in order to have some examples like WildFly Server, ....
 
 [source]
 ----
