@@ -139,11 +139,18 @@ to use it.
 +
 [source]
 ----
-mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
+mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes \
+                       -DarchetypeArtifactId=pom-root \
+                       -DarchetypeVersion=RELEASE \
+                       -DinteractiveMode=false \
+                       -DgroupId=org.cdstore \
+                       -DartifactId=project \
+                       -Dversion=1.0.0-SNAPSHOT
 mv project snowcamp && cd snowcamp
 ----
 
-. Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE
+. Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE. JBoss Forge will create
+  a new maven module, configure the pom.xml file.
 +
 [source]
 ----
