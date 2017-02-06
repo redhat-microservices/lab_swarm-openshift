@@ -140,6 +140,7 @@ to use it.
 mkdir snowcamp
 ----
 +
+
 . Create the parent maven project where we will design the Front and the backend modules
 [source]
 ----
@@ -147,6 +148,7 @@ mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -Darchety
 mv project snowcamp && cd snowcamp
 ----
 +
+
 . Next create the `cdservice` maven module usign the following forge command where the stack to be used is Java EE
 [source]
 ----
