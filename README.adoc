@@ -220,7 +220,6 @@ wildfly-swarm-setup
 wildfly-swarm-detect-fractions --depend --build
 ----
 
-
 . As the service will be called from a resources which is not running from the same HTTP Server and domain, a REST filter should be created to add the CORS Headers
 +
 [source]
@@ -423,7 +422,7 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 
 . cd `cdstorefront`
 
-  mvn wildfly-swarm:run
+  mvn wildfly-swarm:run -Plocal
 
 . Open project within your browser `http://localhost:8081/index.html`
 
@@ -549,7 +548,7 @@ Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_
 +
 [source]
 ----
-mvn fabric8:deploy
+mvn fabric8:deploy -Popenshift
 ----
 
 . Check that you can access the REST endpoint of the service. Remark : you can get the route address using the command `oc get route/cdservice-snowcamp`
