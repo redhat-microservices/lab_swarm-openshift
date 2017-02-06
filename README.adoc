@@ -484,7 +484,8 @@ data:
             password: mysql
 ----
 
-Remark: Ad you can see, the hostname defined corresponds to the `mysql` service published on OpenShift. This name will be resolved by the internal DNS server exposed by OpenShift
+Remark: As you can see, the hostname defined for the connection-url corresponds also to the `mysql` service published on OpenShift (`oc get svc/mysql`). This name will be resolved by the internal DNS server exposed by OpenShift
+        when the application will issue a request to this machine.
 
 . Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
 +
