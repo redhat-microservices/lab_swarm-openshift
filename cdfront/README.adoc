@@ -1,0 +1,7 @@
+# CD Front - NodeJS
+
+  npm install
+  export PORT=8081
+  export URL=http://localhost:8080/rest/catalogs
+
+  OpenShift URL : "http://cdstorefrontend-snowcamp.192.168.99.101.xip.io/rest/catalogs/"
