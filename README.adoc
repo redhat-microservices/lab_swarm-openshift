@@ -150,14 +150,16 @@ mv project snowcamp && cd snowcamp
 ----
 
 . Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE. JBoss Forge will create
-  a new maven module, configure the pom.xml file.
+  a new maven module, configure the pom.xml file. The following command must be executed within the Forge shell or by passing the command using this convention
+  `forge -e "run ...."`
 +
 [source]
 ----
 project-new --named cdservice --stack JAVA_EE_7
 ----
 
-. Setup the JPA entity and the Hibernate persistence file. Define the persistence unit and datasource
+. Setup the JPA project where the provider used is `Hibernate`, the database `MYSQL` which corresponds to the dialect to be configured within the persistence file of Hibernate
+  Specify also the datasource and the persistent-unit name. All these parameters will be used by the Forge addon to populate the file persistence.xml under the directory META-INF
 +
 [source]
 ----
