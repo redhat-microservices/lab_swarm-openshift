@@ -665,7 +665,7 @@ mvn fabric8:deploy
   http://cdfront-snowcamp.192.168.99.119.xip.io/
 
 
-### TO BE REVIEWED
+## TO BE REVIEWED
 
 . Forward the traffic from the service to the host using `port-forwarding` command
 
