@@ -693,5 +693,70 @@ INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VAL
 ----
 
 
+## Enable circuit breaker
 
+. Setup a Turbine server:
++
+[source]
+----
+oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/turbine-server/1.0.28/turbine-server-1.0.28-openshift.yml
+oc policy add-role-to-user admin system:serviceaccount:snowcamp:turbine
+oc expose service turbine-server
+----
 
+. Then a Hystrix dashboard
++
+[source]
+----
+oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/hystrix-dashboard/1.0.28/hystrix-dashboard-1.0.28-openshift.yml
+oc expose service hystrix-dashboard --port=8080
+----
+
+. Add WildFly Swarm Hystrix dependency to the pom.xml
++
+[source]
+----
+<dependency>
+    <groupId>org.wildfly.swarm</groupId>
+    <artifactId>hystrix</artifactId>
+</dependency>
+----
+
+. Add Hystrix enabled label to the service definition (svc.yml)
++
+[source]
+----
+metadata:
+  labels:
+      hystrix.enabled: true
+----
+
+. Implement Hystrix command to get a list of collections (GetCatalogListCommand.java)
++
+[source]
+----
+public class GetCatalogListCommand extends HystrixCommand<List> {
+    /* class attributes and constructor were ommitted for brevity */
+
+    public List<Catalog> run() {
+        /* perform database request */
+    }
+    public List<Catalog> getFallback() {
+        /* return default value in case of failure */
+    }
+}
+----
+
+. Use GetCatalogListCommand whenever catalog list is required
++
+[source]
+----
+new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
+----
+
+. Scale down the database, to see circuit breaker fallback
++
+[source]
+----
+oc scale --replicas=0 dc mysql
+----
