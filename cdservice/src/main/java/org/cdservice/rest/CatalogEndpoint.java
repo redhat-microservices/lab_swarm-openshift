@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import org.cdservice.model.Catalog;
+import org.cdservice.model.GetCatalogListCommand;
 
 /**
  * 
@@ -74,19 +75,11 @@ public class CatalogEndpoint {
 
 	@GET
 	@Produces("application/json")
+	@SuppressWarnings("unchecked")
 	public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
 			@QueryParam("max") Integer maxResult) {
-		TypedQuery<Catalog> findAllQuery = em
-				.createQuery("SELECT DISTINCT c FROM Catalog c ORDER BY c.id",
-						Catalog.class);
-		if (startPosition != null) {
-			findAllQuery.setFirstResult(startPosition);
-		}
-		if (maxResult != null) {
-			findAllQuery.setMaxResults(maxResult);
-		}
-		final List<Catalog> results = findAllQuery.getResultList();
-		return results;
+
+		return new GetCatalogListCommand(em, startPosition, maxResult).execute();
 	}
 
 	@PUT

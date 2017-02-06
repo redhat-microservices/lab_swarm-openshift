@@ -693,5 +693,19 @@ INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VAL
 ----
 
 
+## Enable circuit breaker
 
+. First of all you need to setup Turbine server and Hystrix dashboard:
++
+[source]
+----
+oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/turbine-server/1.0.28/turbine-server-1.0.28-openshift.yml
+oc expose service turbine-server
+
+oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/hystrix-dashboard/1.0.28/hystrix-dashboard-1.0.28-openshift.yml
+oc expose service hystrix-dashboard --port=8080
+----
+
+
+. Then you can create HystrixComands such as the one defined in org/cdservice/model/GetCatalogListCommand.java.
 
