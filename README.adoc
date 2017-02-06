@@ -134,7 +134,7 @@ to use it.
 
 ## Decomposed steps
 
-### Prent project
+### Parent project
 
 . Open a terminal where we will create the snowcamp project
 . Create the parent maven project
@@ -270,7 +270,7 @@ cd ..
 ### Configure the datasource
 
 . To be able to use the project locally or on OpenShift, we will define different datasources and JDBC driver.
-  Aadd a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
+  Add a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
   that WildFly Swarm will use when Hibernate to try to call the database.
 . Configure the datasource to use the H2 in-memory database with `ExampleDS` as datasource name
 +
