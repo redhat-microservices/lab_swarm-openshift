@@ -359,6 +359,13 @@ swarm:
     </dependency>
 ----
 
+. To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders
++
+[source]
+----
+cp scripts/service/import.sql cdservice/src/main/resources
+----
+
 ### Store Front end
 
 . Create the store front project & setup WildFly Swarm. We will specify the HTTP Container to be used which is here Undertow

@@ -53,8 +53,9 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 cd ~~
 cd ..
 
-cp $SNOWCAMP_DIR/front/public/ cdfront/src/main/webapp/
-cp $SNOWCAMP_DIR/front/fabric8/ cdfront/src/main/fabric8/
+# DO NOT WORK
+# cp front/public/ cdfront/src/main/webapp/
+# cp front/fabric8/ cdfront/src/main/fabric8/
 
 #
 # # Copy Service Fabric8 & SQL files
