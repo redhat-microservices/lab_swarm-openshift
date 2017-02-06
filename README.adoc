@@ -431,7 +431,15 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 
 ### Setup My SQL Database
 
-. Crate the MySQL application using the OpenShift MySQL Template
+. Verify first that you are well connected to Openshift
+
+  oc status
+
+. Create the snowcamp namespace/project
+
+  oc new-project snowcamp
+
+. Create the MySQL application using the OpenShift MySQL Template
 +
 [source]
 ----
@@ -456,26 +464,14 @@ Current database: catalogdb
 mysql> SELECT t.* FROM catalogdb.Catalog t;
 ----
 
-. Verify first that you are well connected to Openshift
+### Externalize Front Service
 
-  oc status
+. Create a `service.json` file under webapp folder of the cd front project & define the following key/value where the HOST address corresponds to the IP address used
+  by your VM machine
 
-. Create the snowcamp namespace/project
-
-  oc new-project snowcamp
-
-. Deploy on OpenShift using the cd front and the cd service using the `fabric8:deploy` maven goal
-
-  mvn fabric8:deploy
-
-## Externalize Front Service
-
-- Create service.json file under webapp folder & define the following key/value
-
-  { "cd-service": "http://localhost:8080/rest/catalogs/" }
   { "cd-service": "http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs/" }
 
-- Add a config.js file within the directory scripts containing a $http.get request to access the content
+. Create this `config.js` file within the directory scripts containing a $http.get request to access the content
   of the json file & fetch the key `cd-service`. This key will contain the hostname or service name to be accessed
 
 [source]
@@ -502,18 +498,36 @@ angular.module('cdservice').factory('config', function ($http, $q) {
 });
 ----
 
-- Modify the `scripts/services/CatalogFactory.js` to use the function `config` instead of the hard coded value
+. Modify the `scripts/services/CatalogFactory.js` to use the function `config` instead of the hard coded value
 
 [source]
 ----
   return $resource(config.getApiUrl() + ':CatalogId', { CatalogId: '@id' }, {
 ----
 
-- Edit the app.html page to add the new script externalizing the URL
+. Update the routeProvider of the `app.js` script to access the service & setup a promise function as the call is asynchronous
+[source]
+----
+      .when('/Catalogs',
+      {
+        templateUrl:'views/Catalog/search.html',
+        controller:'SearchCatalogController',
+        resolve: {
+            apiUrl: function(config) {
+              return config.promise;
+            }
+          }
+      })
+----
+
+. Edit the app.html page to add the new script externalizing the URL
 
     <script src="scripts/services/config.js"></script>
 
-- Add a svc.yml under src/main/fabric8 where the target port is 8081 in order to create a service
+. As we will deploy the CD Front project as a Servide that we will route externally from the host machine, we will create 2 OpenShift objects;
+  one to configure the service exposed by the Kubernetes Api (gateway) and the other to configure the HA Proxy how to access the service from the host machine
+. Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
++
 [source]
 ----
 apiVersion: v1
@@ -528,7 +542,8 @@ spec:
   type: ClusterIP
 ----
 
-- Create a route.yml file under src/main/fabric8 to tell to OpenShift to create a route
+. Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route
++
 [source]
 ----
 apiVersion: v1
@@ -543,15 +558,18 @@ spec:
     name: ${project.artifactId}
 ----
 
-- Deploy the cd front project
+. Deploy the cd front project
++
 [source]
 ----
 mvn fabric8:deploy
 ----
 
-- Check that you can access the HTML page of the Front
+. Check that you can access the HTML page of the Front. Remark : you can get the route address using the command `oc get route/cdfront-snowcamp`
 
   http://cdfront-snowcamp.192.168.99.119.xip.io/
+
+
 
 ### TO BE REVIEWED
 
