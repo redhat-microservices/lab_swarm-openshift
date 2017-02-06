@@ -61,7 +61,10 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
     }
 
     public List<Catalog> getFallback() {
-        return Collections.emptyList();
+        Catalog catalog = new Catalog();
+        catalog.setArtist("Fallback");
+        catalog.setTitle("This is a circuit breaker");
+        return Collections.singletonList(catalog);
     }
 
 }
