@@ -109,13 +109,14 @@ in order to issue the commands allowing to build aproject, deploy it and finally
 
 The project will be developed using Java IDE Tool like "IntelliJ, JBoss Developer Studio" while the JBoss Forge tool will help us to design the Java application, add the required dependencies,
  populate the Hibernate in order to:
+
 - Create the REST Service
 - Modelize the JPA Entity & the model
 - Scaffold the AngularJS application
 
-# Create project
+# Project creation
 
-We will follow the following steps in order to create the maven projects with the modules. Some prerequisites are required like JBoss Forge.
+We will follow the following steps in order to create the maven project containing the modules of our application. Some prerequisites are required like JBoss Forge.
 
 ## All in one
 
