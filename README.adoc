@@ -181,7 +181,7 @@ project-new --named cdservice --stack JAVA_EE_7
 
 . Setup the JPA project where the provider used is `Hibernate`, the database `MYSQL` which corresponds to the dialect to be configured within the persistence file of Hibernate.
   Specify also the datasource and the persistent-unit name. All these parameters will be used by the Forge addon to populate the file persistence.xml under the directory META-INF.
-  The command should be executed within the cdservice folder.
+  The command should be executed within the `cdservice` folder.
 +
 [source]
 ----
@@ -189,7 +189,7 @@ jpa-setup --configure-metadata --jpa-provider hibernate --db-type MYSQL --data-s
 ----
 
 Remark : The parameter `--configure-metadata` will tell to Forge to include within the pom.xml the Hibernate Maven plugin responsible to generate the classes from the Entity class
-         like the prersistence.xml file.
+         like the persistence.xml file.
 
 . Create a Catalog Java (but also entity) class where the fields will be defined as such. It is not required to define the field with the PRIMARY key as it will be created
   by default by the JBoss Forge command.
@@ -292,7 +292,7 @@ fabric8-setup
 [source]
 ----
 mkdir -p src/main/config
-touch src/main/config.project-stages.yaml
+touch src/main/config/project-stages.yaml
 ----
 
 . Configure the datasource to use the H2 in-memory database with `ExampleDS` as datasource name
@@ -336,26 +336,26 @@ cp src/main/resources/META-INF/persistence.xml src/main/config/META-INF/persiste
 +
 [source]
 ----
- <profile>
-      <id>local</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/config</directory>
-          </resource>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-          <version>1.4.192</version>
-        </dependency>
-      </dependencies>
-    </profile>
+<profile>
+  <id>local</id>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/config</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.192</version>
+    </dependency>
+  </dependencies>
+</profile>
 ----
 
 . Move the `persistence.xml` file from the `src/main/resources` directory to the target directory `src/main/config-openshift/META-INF`
@@ -390,11 +390,15 @@ mv src/main/resources/META-INF/persistence.xml src/main/config-openshift/META-IN
 [source]
 ----
 ...
-<dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <version>5.1.40</version>
-</dependency>
+<profile>
+...
+<dependencies>
+  <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+  </dependency>
+</dependencies>
+</profile>
 ----
 
 . To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders of your project.
