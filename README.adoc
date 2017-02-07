@@ -879,7 +879,7 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
 EOF
 ----
 
-. DESCRIBE HOW WE WILL ACCHIEVE TO THIS RESULT
+. DESCRIBE HOW WE WILL ACHIEVE TO THIS RESULT
 +
 [source]
 ----
