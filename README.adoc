@@ -243,21 +243,20 @@ wildfly-swarm-detect-fractions --depend --build
 +
 [source]
 ----
-cd cdservice
 rest-new-cross-origin-resource-sharing-filter
 ----
 
-. Now, we will add the Fabric8 Maven Plugin which is our client to comminicate with OpenShift by issuying this command
+. Now, we will add the Fabric8 Maven Plugin and configure the pom.xml file. This Fabric8 Maven plugin is our client to communicate with the OpenShift platform.
+  Issue this command.
 +
 [source]
 ----
 fabric8-setup
-cd ..
 ----
 
-. As the JBoss Fabric Forge Addon used will creta a project using the latest version of the Fabric8 plugin which hasn't been tested for this lab,
-  We will Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92 like also specify the generator to be used.
-  Add the generator wildfly-swarm that we will use
+. As the JBoss Fabric Forge Addon used will create a project using the latest version of the Fabric8 plugin which hasn't been tested for this lab,
+  we will change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92 like also specify the generator to be used.
+  Add the generator wildfly-swarm that we will use.
 +
 [source]
 ----
@@ -270,7 +269,6 @@ cd ..
        <id>fmp</id>
        <goals>
          <goal>resource</goal>
-         <goal>helm</goal>
          <goal>build</goal>
        </goals>
      </execution>
@@ -287,9 +285,16 @@ cd ..
 
 ### Configure the datasource
 
-. To be able to use the project locally or on OpenShift, we will define different datasources and JDBC driver.
+. To be able to use the project locally or on OpenShift, we will define 2 datasources and JDBC drivers.
   Add a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
   that WildFly Swarm will use when Hibernate to try to call the database.
++
+[source]
+----
+mkdir -p src/main/config
+touch src/main/config.project-stages.yaml
+----
+
 . Configure the datasource to use the H2 in-memory database with `ExampleDS` as datasource name
 +
 [source]
@@ -309,7 +314,15 @@ swarm:
 #        password: mysql
 ----
 
-. Next, Copy/paste the generated persistence.xml file under the folder `src/main/config/META-INF` and change the datasource name like the dialect to be used
+. Next, copy/paste the generated persistence.xml file under the folder `src/main/config/META-INF`
++
+[source]
+----
+mkdir -p src/main/config/META-INF/
+cp src/main/resources/META-INF/persistence.xml src/main/config/META-INF/persistence.xml
+----
+
+. Change the datasource name like the dialect to be used
   within the persistence file.
 +
 [source]
@@ -346,23 +359,30 @@ swarm:
 ----
 
 . Move the `persistence.xml` file from the `src/main/resources` directory to the target directory `src/main/config-openshift/META-INF`
++
+[source]
+----
+mkdir -p src/main/config-openshift/META-INF
+mv src/main/resources/META-INF/persistence.xml src/main/config-openshift/META-INF/persistence.xml
+----
+
 . Create another profile called `openshift`
 +
 [source]
 ----
 <profile>
-      <id>openshift</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/config-openshift</directory>
-          </resource>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-      </build>
-    </profile>
+  <id>openshift</id>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/config-openshift</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+</profile>
 ----
 
 . Move the `MySQL Maven dependency` from the pom.xml within the `openshift` profile as the MySQL database will only be used when the project will be deployed on OpenShift.
@@ -370,19 +390,21 @@ swarm:
 [source]
 ----
 ...
-    <!-- Manually -->
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.40</version>
-    </dependency>
+<dependency>
+  <groupId>mysql</groupId>
+  <artifactId>mysql-connector-java</artifactId>
+  <version>5.1.40</version>
+</dependency>
 ----
 
-. To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders of your project
+. To have a subset of data available within the database, copy the import.sql file to the `src/main/config` and `src/main/config-openshift` folders of your project.
+. Move to the `snowcamp` parent folder.
 +
 [source]
 ----
-cp scripts/service/import.sql cdservice/src/main/resources
+cd ..
+cp ../scripts/service/import.sql cdservice/src/main/config
+cp ../scripts/service/import.sql cdservice/src/main/config-openshift
 ----
 
 ### Store Front end
