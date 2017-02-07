@@ -13,11 +13,11 @@ toc::[]
 you will need to install the following on your machine:
 
 - [x] http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[JDK 1.8]
-- [x] https://maven.apache.org/download.cgi[Maven 3.3.6 or higher]
-- [x] https://www.virtualbox.org/wiki/Downloads[Virtualbox 5.0 or higher]
-- [x] https://github.com/minishift/minishift[Minishift 1.0.0.Beta3]
-- [x] https://github.com/openshift/origin/releases/tag/v1.4.1[OpenShift Client 1.4.1]
-- [x] https://forge.jboss.org/download[JBoss Forge]
+- [x] http://maven.apache.org/download.cgi[Maven 3.3.6 or higher]
+- [x] http://www.virtualbox.org/wiki/Downloads[Virtualbox 5.0 or higher]
+- [x] http://github.com/minishift/minishift[Minishift 1.0.0.Beta3]
+- [x] http://github.com/openshift/origin/releases/tag/v1.4.1[OpenShift Client 1.4.1]
+- [x] http://forge.jboss.org/download[JBoss Forge]
 - [x] http://developers.redhat.com/products/devstudio/download/?referrer=jbd[JBoss Developer Studio 10 (optional)]
 
 # Installation of OpenShift
