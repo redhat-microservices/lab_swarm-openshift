@@ -551,7 +551,12 @@ Remark: As we haven't yet deployed the service, the Catalog DB hasn't been yet c
 
 ### Externalize the Datasource
 
-[TODO] Describe what we will do here from a general point of view
+To avoid to package the `project-stages.yml` file containing the definition of the datasource within the uber jar file used by WildFly Swarm to launch
+the Web Server, we will externalize this file and mount it as a volume to the pod/docker container when it will be created. This process will require
+ to define a file containing the definition of the Volume to be mounted and the key of the value to be fetch from an internal cache managed by the Kubernetes
+ platform which is called `configMap`. The ConfigMap that we will create for this project will help us to define the content of the `project-stages.yml`.
+ These files will be created manually as no tool is available to generate them and will be placed in a directory which is scanned by the Fabric8 Maven
+ plugin when the project is build and deployed on OpenShift.
 
 . Create under the directory `src/main/fabric8` of the `cdservice` maven module the `configmap.yml` file which contains the definition of the project-stages.yml.
 +
@@ -577,10 +582,13 @@ data:
 EOF
 ----
 
-Remark: As you can see, the hostname defined for the connection-url corresponds also to the `mysql` service published on OpenShift (`oc get svc/mysql`). This name will be resolved by the internal DNS server exposed by OpenShift
-        when the application will issue a request to this machine.
+Remark: As you can see, the hostname defined for the connection-url corresponds also to the `mysql` service published on OpenShift (`oc get svc/mysql`).
+This name will be resolved by the internal DNS server exposed by OpenShift when the application will issue a request to this machine.
 
-. Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
+. In order to expose our docker container created by Kubernetes as pod, we will create a `svc.yml`. The content of this file will be used
+  by Kubernetes to expose using its Api Gateway a service using the specified port. The targetPort allows to map the docker port with the targetPort
+  exposed by the Api.
+. Add a `svc.yml` under the `src/main/fabric8` folder where the target port is 8080 in order to create a service
 +
 [source]
 ----
@@ -600,7 +608,8 @@ spec:
 EOF
 ----
 
-. Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route and specifies the target port which is `8081`
+. As this service is only visible and accessible inside the Virtual Machine, we will use the HAProxy deployed by OpenShift to route the traffic from the host the the VM.
+  Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route and specifies the target port which is `8080`
 +
 [source]
 ----
@@ -620,7 +629,9 @@ spec:
 EOF
 ----
 
-. Map the configMap to a volume that OpenShift will mount/attach to the pod when it will be created. So, create a deploymentconfig.yml file
+. Map the configMap to a volume that OpenShift will mount/attach to the pod when it will be created.
+  Create a `deploymentconfig.yml` file in order to specify to Kubernetes how the pod could be created (= from a Docker Image),
+  the ENV variables needed, volume to be attached and where it could resolve the key containing the content
 +
 [source]
 ----
@@ -695,7 +706,7 @@ spec:
 EOF
 ----
 
-Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_OPTIONS parameter
+Remark : The location of the `project-stages.yml` file to be used by WildFly Swarm is passed as JAVA_OPTIONS parameter
 
 . Deploy the `cdservice` project on Openshift using this maven instruction
 +
@@ -704,15 +715,16 @@ Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_
 mvn clean fabric8:deploy -Popenshift
 ----
 
-. Check that you can access the REST endpoint of the service.
-  Remark : you can retrieve the route address to access your service using this oc client command `oc get route/cdservice`
+. Check that you can access the REST endpoint of the service using this curl request format `http://CDSERVICE_ROUTE/rest/catalogs`.
 
   curl http://cdservice-snowcamp.192.168.99.100.xip.io/rest/catalogs
 
+Remark : you can retrieve the route address to access your service using this oc client command `oc get route/cdservice`
 
 ### Externalize Front Service
 
-[TODO] Describe what we will do here from a general point of view
+The URL to access the service will be specified within a `settings.json` file that the AngularJS framework will load when the service `/catalogs`
+will be called. The file isn't mounted as a volume attached to the pod but that could be done using the same mechanism as presented before.
 
 . Create a `service.json` file under webapp folder of the cd front project & define the following key/value where the HOST address corresponds to the IP address used
   by your VM machine
@@ -796,7 +808,7 @@ angular.module('cdservice').factory('CatalogResource', function ($resource, conf
 
 . As we will deploy the CD Front project as a Service that we will route externally from the host machine, we will create 2 OpenShift objects;
   one to configure the service exposed by the Kubernetes Api (gateway) and the other to configure the HA Proxy how to access the service from the host machine
-. Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
+. Add a `svc.yml` under the `src/main/fabric8` folder where the target port is 8081 in order to create a service.
 +
 [source]
 ----
@@ -848,9 +860,17 @@ mvn fabric8:deploy
 
   http://cdfront-snowcamp.MY_HOST_IP_ADDRESS.xip.io/
 
-.Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your virtual machine
+. Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your virtual machine
+. Open your browser and verifies that you can access the Front and consult the CDs collection.
 
 ## Enable circuit breaker
+
+Within this section, we will implement the circuit breaker pattern using the NetFlix OSS Hystrix project. The breaker will be developed within
+our CatalogEnpoint in order to send a dummy record to the front if the database is not longer available. We will extend the `cdservice` project
+to support this pattern by adding first an HystrixCommand and next to register it within the Endpoint class. The command contains 2 methods `run()` and `fallback()`
+which are used by the HystrixServlet with the help of the Java observable pattern. The method run will be called regularly to check if we get a response from the MySQL database,
+if this is the case, the fallback method will be called. The information (= events or hearbeat messages) created, are published by Hystrix within a server called
+Turbine where the role is to collect but also to aggregate the information. It also allows to graphically display what happen within the different circuit breakers deployed.
 
 . Setup a Turbine server which is responsible to collect the events pushed by the Hystrix Commands
 +
@@ -861,7 +881,7 @@ oc policy add-role-to-user admin system:serviceaccount:snowcamp:turbine
 oc expose service turbine-server
 ----
 
-. Then deply a Hystrix Web dashboard from where we can consult the events published within the Turbine server.
+. Then deply a Hystrix Web dashboard from where we can consult the events published by the Turbine server and check if some strange happened.
 +
 [source]
 ----
@@ -869,7 +889,7 @@ oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/hystrix-dashboard
 oc expose service hystrix-dashboard --port=8080
 ----
 
-. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice` (pom.xml) project
+. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice` (pom.xml) project in order to get the Hystrix Java classes
 +
 [source]
 ----
@@ -888,7 +908,10 @@ metadata:
     hystrix.enabled: true
 ----
 
-. Implement Hystrix command to get a list of collections (GetCatalogListCommand.java)
+. Create a Hystrix command class by extending the `HystrixCommand` classto where you will define the run and fallback methods.
+. Register the command under the Group Key `CatalogGroup`
+. Return a list of catalog within the `run()` method.
+. Populate a dummy record within the `fallback()` method.
 +
 [source]
 ----
@@ -936,7 +959,7 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
 EOF
 ----
 
-. Register the GetCatalogListCommand within `src/main/java/org/cdservice/rest/CatalogEndpoint.java` class in order to access the Circuit Break or let's say to enable it.
+. Register the GetCatalogListCommand within the `src/main/java/org/cdservice/rest/CatalogEndpoint.java` class in order to access the Circuit Break or let's say to enable it.
 +
 [source]
 ----
