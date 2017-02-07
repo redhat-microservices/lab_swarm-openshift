@@ -138,7 +138,7 @@ The first thing to be done is to git clone locally the project
 
 ## All in one
 
-The following script (if you want) can help you to setup the full project in one step. We invite you to first look to the decomposed steps in order to build the project step-by-step before
+The following script (if you want) can help you to setup partially the  project in one step. We invite you to first look to the decomposed steps in order to build the project step-by-step before
 to use it.
 
 [source]
@@ -185,7 +185,10 @@ project-new --named cdservice --stack JAVA_EE_7
 +
 [source]
 ----
-jpa-setup --configure-metadata --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
+jpa-setup --configure-metadata --jpa-provider hibernate \
+          --db-type MYSQL \
+          --data-source-name java:jboss/datasources/CatalogDS \
+          --persistence-unit-name cdservice-persistence-unit
 ----
 
 Remark : The parameter `--configure-metadata` will tell to Forge to include within the pom.xml the Hibernate Maven plugin responsible to generate the classes from the Entity class
@@ -285,8 +288,9 @@ fabric8-setup
 
 ### Configure the datasource
 
-. To be able to use the project locally or on OpenShift, we will define 2 datasources and JDBC drivers.
-  Add a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
+. To be able to use the project locally but also on OpenShift, we will define 2 datasources and JDBC drivers to use either a H2 in-memory
+  database which doesn't required any installation of a database or MySQL that we will install in OpenShift.
+. Add a folder `src/main/config` containing a `project-stages.yaml` file. This file will contain the definition of the datasources
   that WildFly Swarm will use when Hibernate to try to call the database.
 +
 [source]
@@ -311,7 +315,7 @@ swarm:
 EOF
 ----
 
-. Next, copy/paste the generated persistence.xml file under the folder `src/main/config/META-INF`
+. Next, copy/paste the `persistence.xml` file which has been created by the JBoss Forge command `jpa-setup` under the folder `src/main/config/META-INF`
 +
 [source]
 ----
@@ -325,11 +329,13 @@ cp src/main/resources/META-INF/persistence.xml src/main/config/META-INF/persiste
 [source]
 ----
 <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+...
 <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
 ----
 
 . Define a maven profile within the `pom.xml` file where we will tell to maven to copy the `src/main/config` content to the target folder `src/main/resources`
-  when the project will be compiled. Declare also the h2 database dependency
+  when the project will be compiled. Declare also the h2 database dependency. This dependency will be detected by WildFly Swarm when the server will be started
+  and by consequence this H2 JDBC Driver will be used.
 +
 [source]
 ----
@@ -355,7 +361,8 @@ cp src/main/resources/META-INF/persistence.xml src/main/config/META-INF/persiste
 </profile>
 ----
 
-. Move the `persistence.xml` file from the `src/main/resources` directory to the target directory `src/main/config-openshift/META-INF`
+. Create a new configuration directory `src/main/config-openshift` where we will configure what will be deployed on OpenShift.
+. Move the `persistence.xml` file from the `src/main/resources` directory to another target directory `src/main/config-openshift/META-INF`
 +
 [source]
 ----
@@ -428,14 +435,14 @@ project-new --named cdfront --stack JAVA_EE_7 --type wildfly-swarm --http-port 8
 wildfly-swarm-add-fraction --fractions undertow
 ----
 
-. The `org.cdfront.rest.HelloWorldEndpoint.java` class can be deleted
+. The `org.cdfront.rest.HelloWorldEndpoint.java` class created by the Swarm Forge command can be deleted as we will not use it
 +
 [source]
 ----
 rm -rf cdfront/src/main/java/org/cdfront/rest/*
 ----
 
-. As the web content has been created/populated previously, we will move the resources from the `cdservice` to the `cdfront` project.
+. As the web content has been created/populated previously, we will move the Web resources from the `cdservice` to the `cdfront` project.
 +
 [source]
 ----
@@ -451,7 +458,7 @@ cd cdfront
 fabric8-setup
 ----
 
-. Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
+. Change the version of the Fabric8 Maven plugin as we did before from 3.2.9 to 3.1.92
 . Add the generator wildfly-swarm that we will use
 +
 [source]
@@ -479,6 +486,14 @@ fabric8-setup
 </plugin>
 ----
 
+. Change the address of the `cdservice` http server that the front will access. Edit the file src/main/webapp/scripts/services/CatalogFactory.js and
+  add the address
++
+[source]
+----
+var resource = $resource('http://localhost:8080/rest/catalogs/:CatalogId' .....
+----
+
 ## Build and deploy
 
 ### Build and run locally
@@ -486,7 +501,7 @@ fabric8-setup
 . Open 2 terminal in order to start the front & backend
 . cd `cdservice`
 
-  mvn clean wildfly-swarm:run -Plocal
+  mvn clean compile wildfly-swarm:run -Plocal
 
 . cd `cdfront`
 
