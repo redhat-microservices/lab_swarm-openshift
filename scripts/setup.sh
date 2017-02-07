@@ -20,14 +20,16 @@ if [[ -n $1 ]]; then
 fi
 
 
-# Remove snowcamp folder and create a new parent multi-modules project
+# Remove snowcamp folder defined one level up and create a new parent multi-modules project
 CURRENT=$(pwd)
-rm -rf snowcamp
+rm -rf ../snowcamp
 mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
 mv project snowcamp && cd snowcamp
 
-# export VERBOSE=true
+#export VERBOSE=true
 
 forge -e "run $CURRENT/cdstore-forge.fsh"
 
-mv $CURRENT/snowcamp/ ..
+cd ..
+echo $(pwd)
+mv snowcamp/ ..
