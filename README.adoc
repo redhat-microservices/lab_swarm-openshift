@@ -708,7 +708,7 @@ EOF
 
 Remark : The location of the `project-stages.yml` file to be used by WildFly Swarm is passed as JAVA_OPTIONS parameter
 
-. Deploy the `cdservice` project on Openshift using this maven instruction
+. Deploy the `cdservice` project on OpenShift using this maven instruction
 +
 [source]
 ----
@@ -993,7 +993,7 @@ You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-W
 
 ## Tricks
 
-. You can use the MySQL database running in Openshift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
+. You can use the MySQL database running in OpenShift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
 
 [source]
 ----
