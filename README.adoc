@@ -1087,5 +1087,13 @@ spec:
         name: "wildfly-swarm"
   triggers:
   - type: "ConfigChange"
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - "wildfly-swarm"
+      from:
+        kind: "ImageStreamTag"
+        name: "cdfront:latest"
+    type: "ImageChange"
 EOF
 ----
