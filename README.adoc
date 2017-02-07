@@ -407,26 +407,46 @@ cp ../scripts/service/import.sql cdservice/src/main/config
 cp ../scripts/service/import.sql cdservice/src/main/config-openshift
 ----
 
-### Store Front end
-
-. Create the store front project & setup WildFly Swarm. We will specify the HTTP Container to be used which is here Undertow
+. We can now build the project to be validate that it is in order.
 +
 [source]
 ----
-project-new --named cdstorefrontend --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
+mvn compile
+mvn clean compile -Plocal
+mvn clean compile -Popenshift
+----
+
+### Store Front end
+
+. It is time now to create the store front project & setup WildFly Swarm. We will specify the HTTP Container to be used which is here Undertow.
+. Execute the following JBoss Forge command within the `snowcamp` folder.
++
+[source]
+----
+project-new --named cdfront --stack JAVA_EE_7 --type wildfly-swarm --http-port 8081
 wildfly-swarm-add-fraction --fractions undertow
 ----
 
-. As the web content has been created/populated previously, we will copy it here.
+. The `org.cdfront.rest.HelloWorldEndpoint.java` class can be deleted
 +
 [source]
 ----
-mv ../cdservice/src/main/webapp/ src/main/
+rm -rf cdfront/src/main/java/org/cdfront/rest/*
+----
 
+. As the web content has been created/populated previously, we will move the resources from the `cdservice` to the `cdfront` project.
++
+[source]
+----
+mv cdservice/src/main/webapp/ cdfront/src/main/
+mkdir -p cdservice/src/main/webapp/WEB-INF
+----
 
-# Keep empty src/main/webapp/WEB-INF
-mkdir ../cdservice/src/main/webapp
-mkdir ../cdservice/src/main/webapp/WEB-INF
+. Setup this project as Fabric8 using the corresponding JBoss Forge command within the `cdfront` folder.
++
+[source]
+----
+fabric8-setup
 ----
 
 . Change the version of the Fabric8 Maven plugin from 3.2.9 to 3.1.92
@@ -435,27 +455,26 @@ mkdir ../cdservice/src/main/webapp/WEB-INF
 [source]
 ----
 <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>fabric8-maven-plugin</artifactId>
-        <version>3.1.92</version>
-        <executions>
-          <execution>
-            <id>fmp</id>
-            <goals>
-              <goal>resource</goal>
-              <goal>helm</goal>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <generator>
-            <includes>
-              <include>wildfly-swarm</include>
-            </includes>
-          </generator>
-        </configuration>
-      </plugin>
+  <groupId>io.fabric8</groupId>
+  <artifactId>fabric8-maven-plugin</artifactId>
+  <version>3.1.92</version>
+  <executions>
+    <execution>
+      <id>fmp</id>
+      <goals>
+        <goal>resource</goal>
+        <goal>build</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <generator>
+      <includes>
+        <include>wildfly-swarm</include>
+      </includes>
+    </generator>
+  </configuration>
+</plugin>
 ----
 
 ## Build and deploy
