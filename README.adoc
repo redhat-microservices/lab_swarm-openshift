@@ -823,7 +823,7 @@ mvn fabric8:deploy
 
 ## Enable circuit breaker
 
-. Setup a Turbine server:
+. Setup a Turbine server which is responsible to collect the events pushed by the Hystrix Commands
 +
 [source]
 ----
@@ -863,6 +863,9 @@ metadata:
 +
 [source]
 ----
+touch src/main/java/org/cdservice/model/GetCatalogListCommand.java
+
+cat << 'EOF' > src/main/java/org/cdservice/model/GetCatalogListCommand.java
 public class GetCatalogListCommand extends HystrixCommand<List> {
     /* class attributes and constructor were ommitted for brevity */
 
@@ -873,13 +876,63 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
         /* return default value in case of failure */
     }
 }
+EOF
 ----
 
-. Use GetCatalogListCommand whenever catalog list is required
+. DESCRIBE HOW WE WILL ACCHIEVE TO THIS RESULT
 +
 [source]
 ----
-new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
+public class GetCatalogListCommand extends HystrixCommand<List> {
+
+    private final EntityManager em;
+
+    private final Integer startPosition;
+
+    private final Integer maxResult;
+
+    public GetCatalogListCommand(EntityManager em, Integer startPosition, Integer maxResult) {
+        super(HystrixCommandGroupKey.Factory.asKey("CatalogGroup"));
+        this.em = em;
+        this.startPosition = startPosition;
+        this.maxResult = maxResult;
+    }
+
+    public List<Catalog> run() {
+        TypedQuery<Catalog> findAllQuery = em
+                .createQuery("SELECT DISTINCT c FROM Catalog c ORDER BY c.id", Catalog.class);
+        if (startPosition != null) {
+            findAllQuery.setFirstResult(startPosition);
+        }
+        if (maxResult != null) {
+            findAllQuery.setMaxResults(maxResult);
+        }
+        return findAllQuery.getResultList();
+    }
+
+    public List<Catalog> getFallback() {
+        Catalog catalog = new Catalog();
+        catalog.setArtist("Fallback");
+        catalog.setTitle("This is a circuit breaker");
+        return Collections.singletonList(catalog);
+    }
+----
+
+. Use GetCatalogListCommand whenever catalog list is required within the `CatalogEndpoint.class`
++
+[source]
+----
+public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
+			@QueryParam("max") Integer maxResult) {
+   new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
+}
+----
+
+. Redeploy the service modified
++
+[source]
+----
+mvn fabric8:deploy -Popenshift
 ----
 
 . Scale down the database, to see circuit breaker fallback
