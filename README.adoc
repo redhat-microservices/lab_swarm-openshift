@@ -130,7 +130,10 @@ The project will be developed using Java IDE Tool like "IntelliJ, JBoss Develope
 We will follow the following steps in order to create the maven project containing the modules of our application. Some prerequisites are required like JBoss Forge.
 The first thing to be done is to git clone locally the project
 
+. Open a terminal where we will create the snowcamp project
+. Git clone the project
   git clone https://github.com/redhat-microservices/lab_swarm-openshift.git
+. Change to the director yof the cloned git repo
   cd lab_swarm-openshift
 
 ## All in one
@@ -148,7 +151,8 @@ cd scripts
 
 ### Parent project
 
-. Open a terminal where we will create the snowcamp project
+Within the git cloned project, create a project snowcamp using maven archetype:generate plugin
+
 . Create the parent maven project
 +
 [source]
