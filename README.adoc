@@ -299,6 +299,7 @@ touch src/main/config/project-stages.yaml
 +
 [source]
 ----
+cat << 'EOF' > src/main/config/project-stages.yaml
 swarm:
   datasources:
     data-sources:
@@ -307,11 +308,7 @@ swarm:
         connection-url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
         user-name: sa
         password: sa
-#      CatalogDS:
-#        driver-name: mysql
-#        connection-url: jdbc:mysql://localhost:3306/catalogdb
-#        user-name: mysql
-#        password: mysql
+EOF
 ----
 
 . Next, copy/paste the generated persistence.xml file under the folder `src/main/config/META-INF`
@@ -549,7 +546,7 @@ cd cdservice
 mkdir -p src/main/fabric8
 touch src/main/fabric8/configmap.yml
 
-cat <<EOF > src/main/fabric8/configmap.yml
+cat << 'EOF' > src/main/fabric8/configmap.yml
 metadata:
   name: ${project.artifactId}
 data:
@@ -574,6 +571,7 @@ Remark: As you can see, the hostname defined for the connection-url corresponds 
 ----
 touch src/main/fabric8/svc.yml
 
+cat << 'EOF' > src/main/fabric8/svc.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -584,14 +582,16 @@ spec:
       port: 8080
       targetPort: 8080
   type: ClusterIP
+EOF
 ----
 
-. Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route and specifies the target port whic is `8081`
+. Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route and specifies the target port which is `8081`
 +
 [source]
 ----
 touch src/main/fabric8/route.yml
 
+cat << 'EOF' > src/main/fabric8/route.yml
 apiVersion: v1
 kind: Route
 metadata:
@@ -602,6 +602,7 @@ spec:
   to:
     kind: Service
     name: ${project.artifactId}
+EOF
 ----
 
 . Map the configMap to a volume that OpenShift will mount/attach to the pod when it will be created. So, create a deploymentconfig.yml file
@@ -610,6 +611,7 @@ spec:
 ----
 touch src/main/fabric8/deploymentconfig.yml
 
+cat << 'EOF' > src/main/fabric8/deploymentconfig.yml
 apiVersion: "v1"
 kind: "DeploymentConfig"
 metadata:
@@ -675,6 +677,7 @@ spec:
         kind: "ImageStreamTag"
         name: "cdservice:latest"
     type: "ImageChange"
+EOF
 ----
 
 Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_OPTIONS parameter
@@ -704,7 +707,9 @@ mvn clean fabric8:deploy -Popenshift
 cd cdfront
 touch src/main/webapp/service.json
 
+cat << 'EOF' > src/main/webapp/service.json
 { "cd-service": "http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs/" }
+EOF
 ----
 
 . Create this `config.js` file within the directory scripts containing a $http.get request to access the content
@@ -714,6 +719,7 @@ touch src/main/webapp/service.json
 ----
 touch src/main/webapp/scripts/services/config.js
 
+cat << 'EOF' > src/main/webapp/scripts/services/config.js
 angular.module('cdservice').factory('config', function ($http, $q) {
   var deferred = $q.defer();
   var apiUrl = null;
@@ -734,6 +740,7 @@ angular.module('cdservice').factory('config', function ($http, $q) {
     }
   };
 });
+EOF
 ----
 
 . Modify the `scripts/services/CatalogFactory.js` to use the function `config` instead of the hard coded value
@@ -780,6 +787,7 @@ angular.module('cdservice').factory('CatalogResource', function ($resource, conf
 mkdir -p src/main/fabric8/
 touch src/main/fabric8/svc.yml
 
+cat << 'EOF' > src/main/fabric8/svc.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -790,6 +798,7 @@ spec:
       port: 8080
       targetPort: 8081
   type: ClusterIP
+EOF
 ----
 
 . Create a `route.yml` file under the `src/main/fabric8` to tell to OpenShift to create a route
@@ -798,6 +807,7 @@ spec:
 ----
 touch src/main/fabric8/route.yml
 
+cat << 'EOF' > src/main/fabric8/route.yml
 apiVersion: v1
 kind: Route
 metadata:
@@ -808,6 +818,7 @@ spec:
   to:
     kind: Service
     name: ${project.artifactId}
+EOF
 ----
 
 . Deploy the cd front project
@@ -840,7 +851,7 @@ oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/hystrix-dashboard
 oc expose service hystrix-dashboard --port=8080
 ----
 
-. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice`
+. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice` (pom.xml)
 +
 [source]
 ----
@@ -850,13 +861,13 @@ oc expose service hystrix-dashboard --port=8080
 </dependency>
 ----
 
-. Add Hystrix enabled label to the service definition (svc.yml)
+. Add Hystrix enabled label to the service definition (src/main/fabric8/svc.yml)
 +
 [source]
 ----
 metadata:
   labels:
-      hystrix.enabled: true
+    hystrix.enabled: true
 ----
 
 . Implement Hystrix command to get a list of collections (GetCatalogListCommand.java)
@@ -866,29 +877,18 @@ metadata:
 touch src/main/java/org/cdservice/model/GetCatalogListCommand.java
 
 cat << 'EOF' > src/main/java/org/cdservice/model/GetCatalogListCommand.java
+package org.cdservice.model;
+
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.Collections;
+import java.util.List;
+
 public class GetCatalogListCommand extends HystrixCommand<List> {
-    /* class attributes and constructor were ommitted for brevity */
-
-    public List<Catalog> run() {
-        /* perform database request */
-    }
-    public List<Catalog> getFallback() {
-        /* return default value in case of failure */
-    }
-}
-EOF
-----
-
-. DESCRIBE HOW WE WILL ACHIEVE TO THIS RESULT
-+
-[source]
-----
-public class GetCatalogListCommand extends HystrixCommand<List> {
-
     private final EntityManager em;
-
     private final Integer startPosition;
-
     private final Integer maxResult;
 
     public GetCatalogListCommand(EntityManager em, Integer startPosition, Integer maxResult) {
@@ -897,7 +897,6 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
         this.startPosition = startPosition;
         this.maxResult = maxResult;
     }
-
     public List<Catalog> run() {
         TypedQuery<Catalog> findAllQuery = em
                 .createQuery("SELECT DISTINCT c FROM Catalog c ORDER BY c.id", Catalog.class);
@@ -909,30 +908,36 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
         }
         return findAllQuery.getResultList();
     }
-
     public List<Catalog> getFallback() {
         Catalog catalog = new Catalog();
         catalog.setArtist("Fallback");
         catalog.setTitle("This is a circuit breaker");
         return Collections.singletonList(catalog);
     }
+}
+EOF
 ----
 
-. Use GetCatalogListCommand whenever catalog list is required within the `CatalogEndpoint.class`
+. Use GetCatalogListCommand to get a catalog list withing the
+Use GetCatalogListCommand whenever catalog list is required within the src/main/java/org/cdservice/rest/CatalogEndpoint.java
 +
 [source]
 ----
+import org.cdservice.model.GetCatalogListCommand;
+
+@GET
+@Produces("application/json")
 public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
 			@QueryParam("max") Integer maxResult) {
-   new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
+   return new GetCatalogListCommand(em, startPosition, maxResult).execute();
 }
 ----
 
-. Redeploy the service modified
+. Redeploy the modified service
 +
 [source]
 ----
-mvn fabric8:deploy -Popenshift
+mvn clean fabric8:deploy -Popenshift
 ----
 
 . Scale down the database, to see circuit breaker fallback
@@ -941,6 +946,8 @@ mvn fabric8:deploy -Popenshift
 ----
 oc scale --replicas=0 dc mysql
 ----
+
+You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-Works[here].
 
 ## Tricks
 
