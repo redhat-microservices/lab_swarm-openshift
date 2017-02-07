@@ -994,7 +994,7 @@ You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-W
 ## Tricks
 
 . You can use the MySQL database running in OpenShift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
-
++
 [source]
 ----
 export pod=$(oc get pod | grep mysql | awk '{print $1}')
@@ -1020,6 +1020,7 @@ INSERT INTO Catalog (id, version, artist, description, price, publicationDate, t
 ----
  <cdfront.url>${backend.url}</cdfront.url>
 ----
+
 . Create a folder `resources` containing a copy of the `scripts/services/CatalogFactory.js` file
 +
 [source]
