@@ -446,6 +446,7 @@ mkdir -p cdservice/src/main/webapp/WEB-INF
 +
 [source]
 ----
+cd cdfront
 fabric8-setup
 ----
 
@@ -484,19 +485,19 @@ fabric8-setup
 . Open 2 terminal in order to start the front & backend
 . cd `cdservice`
 
-  mvn wildfly-swarm:run -Plocal
+  mvn clean wildfly-swarm:run -Plocal
 
-. cd `cdstorefront`
+. cd `cdfront`
 
   mvn wildfly-swarm:run
 
-. Open project within your browser `http://localhost:8081/index.html`
+. Open the project within your browser `http://localhost:8081/index.html`
 
 ### Deploy on OpenShift
 
 ### Setup My SQL Database
 
-. Verify first that you are well connected to Openshift
+. Verify first that you are well connected to `OpenShift`
 
   oc status
 
