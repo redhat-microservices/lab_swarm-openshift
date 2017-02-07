@@ -12,8 +12,8 @@
 
 CURRENT=$(pwd)
 
-cd $TMPDIR && rm -rf snowcamp
-export SNOWCAMP_DIR=$(pwd)
+rm -rf snowcamp
+
 mvn archetype:generate -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DinteractiveMode=false -DgroupId=org.cdstore -DartifactId=project -Dversion=1.0.0-SNAPSHOT
 mv project snowcamp && cd snowcamp
 
