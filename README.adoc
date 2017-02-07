@@ -708,10 +708,11 @@ cd cdfront
 touch src/main/webapp/service.json
 
 cat << 'EOF' > src/main/webapp/service.json
-{ "cd-service": "http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs/" }
+{ "cd-service": "http://cdservice-snowcamp.MY_HOST_IP_ADDRESS.xip.io/rest/catalogs/" }
 EOF
 ----
 
+. Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your `cdservice`
 . Create this `config.js` file within the directory scripts containing a $http.get request to access the content
   of the json file & fetch the key `cd-service`. This key will contain the hostname or service name to be accessed
 
