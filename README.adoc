@@ -955,7 +955,7 @@ You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-W
 
 ## Tricks
 
-. Forward the traffic from the service as the MySQL Database to the host using `port-forwarding` command
+. You can use the MySQL database running in Openshift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
 
 [source]
 ----
@@ -963,13 +963,13 @@ export pod=$(oc get pod | grep mysql | awk '{print $1}')
 oc port-forward $pod 3306:3306
 ----
 
-. SQL query to insert CD records (if the table has been created !)
+. In case you want to create some new records or add yours, use this SQL query to insert CD records (if the table has been created !)
 +
 [source]
 ----
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (1,"ACDC","Australian hard rock band", 15.0, '1980-07-25', "Back in Black");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (2,"Abba","Swedish pop music group", 12.0, '1976-10-11', "Arrival");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (3,"Coldplay","British rock band ", 17.0, '2008-07-12', "Viva la Vida");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (4,"U2","Irish rock band ", 18.0, '1987-03-09', "The Joshua Tree");
-INSERT INTO Catalog (id, artist, description, price, publicationDate, title) VALUES (5,"Metallica","Heavy metal band", 15.0, '1991-08-12', "Black");
+INSERT INTO Catalog (id, version, artist, description, price, publicationDate, title) VALUES (1001, 1, 'ACDC', 'Australian hard rock band', 15.0, '1980-07-25', 'Back in Black');
+INSERT INTO Catalog (id, version, artist, description, price, publicationDate, title) VALUES (1002, 1, 'Abba', 'Swedish pop music group', 12.0, '1976-10-11', 'Arrival');
+INSERT INTO Catalog (id, version, artist, description, price, publicationDate, title) VALUES (1003, 1, 'Coldplay', 'British rock band ', 17.0, '2008-07-12', 'Viva la Vida');
+INSERT INTO Catalog (id, version, artist, description, price, publicationDate, title) VALUES (1004, 1, 'U2', 'Irish rock band ', 18.0, '1987-03-09', 'The Joshua Tree');
+INSERT INTO Catalog (id, version, artist, description, price, publicationDate, title) VALUES (1005, 1, 'Metallica', 'Heavy metal band', 15.0, '1991-08-12', 'Black');
 ----
