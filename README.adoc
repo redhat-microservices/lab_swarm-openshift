@@ -513,10 +513,10 @@ fabric8-setup
 +
 [source]
 ----
-  oc new-app --template=mysql-ephemeral \
-      -p MYSQL_USER=mysql \
-      -p MYSQL_PASSWORD=mysql \
-      -p MYSQL_DATABASE=catalogdb
+oc new-app --template=mysql-ephemeral \
+    -p MYSQL_USER=mysql \
+    -p MYSQL_PASSWORD=mysql \
+    -p MYSQL_DATABASE=catalogdb
 ----
 
 . Next, check if the Database is up and alive
@@ -532,16 +532,24 @@ Connection id:    1628
 Current database: catalogdb
 
 mysql> SELECT t.* FROM catalogdb.Catalog t;
+ERROR 1146 (42S02): Table 'catalogdb.Catalog' doesn't exist
 ----
+
+Remark: As we haven't yet deployed the service, the Catalog DB hasn't been yet created.
 
 ### Externalize the Datasource
 
 [TODO] Describe what we will do here from a general point of view
 
-. Create under the directory `src/main/fabric8` of the `cdservice` maven module the `configmap.yml` file which contains the definition of the project-stages.yml
+. Create under the directory `src/main/fabric8` of the `cdservice` maven module the `configmap.yml` file which contains the definition of the project-stages.yml.
 +
 [source]
 ----
+cd cdservice
+mkdir -p src/main/fabric8
+touch src/main/fabric8/configmap.yml
+
+cat <<EOF > src/main/fabric8/configmap.yml
 metadata:
   name: ${project.artifactId}
 data:
@@ -554,6 +562,7 @@ data:
             connection-url: jdbc:mysql://mysql:3306/catalogdb
             user-name: mysql
             password: mysql
+EOF
 ----
 
 Remark: As you can see, the hostname defined for the connection-url corresponds also to the `mysql` service published on OpenShift (`oc get svc/mysql`). This name will be resolved by the internal DNS server exposed by OpenShift
@@ -563,6 +572,8 @@ Remark: As you can see, the hostname defined for the connection-url corresponds 
 +
 [source]
 ----
+touch src/main/fabric8/svc.yml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -579,6 +590,8 @@ spec:
 +
 [source]
 ----
+touch src/main/fabric8/route.yml
+
 apiVersion: v1
 kind: Route
 metadata:
@@ -595,16 +608,53 @@ spec:
 +
 [source]
 ----
+touch src/main/fabric8/deploymentconfig.yml
+
+apiVersion: "v1"
+kind: "DeploymentConfig"
+metadata:
+  name: "cdservice"
 spec:
+  replicas: 1
+  selector:
+    project: "cdservice"
+    provider: "fabric8"
+    group: "org.cdservice"
+  strategy:
+    rollingParams:
+      timeoutSeconds: 10800
+    type: "Rolling"
   template:
     spec:
       containers:
-        - volumeMounts:
-            - name: config
-              mountPath: /app/config
-          env:
-            - name: JAVA_OPTIONS
-              value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml"
+      - env:
+        - name: "KUBERNETES_NAMESPACE"
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.namespace"
+        - name: "AB_JOLOKIA_OFF"
+          value: "true"
+        - name: "JAVA_APP_DIR"
+          value: "/deployments"
+        - name: "AB_OFF"
+          value: "true"
+        - name: JAVA_OPTIONS
+          value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml"
+        image: "cdservice:latest"
+        imagePullPolicy: "IfNotPresent"
+        name: "wildfly-swarm"
+        ports:
+        - containerPort: 8080
+          name: "http"
+          protocol: "TCP"
+        - containerPort: 9779
+          name: "prometheus"
+          protocol: "TCP"
+        - containerPort: 8778
+          name: "jolokia"
+          protocol: "TCP"
+        securityContext:
+          privileged: false
       volumes:
         - configMap:
             name: ${project.artifactId}
@@ -612,20 +662,31 @@ spec:
             - key: "project-stages.yml"
               path: "project-stages.yml"
           name: config
+  triggers:
+  - type: "ConfigChange"
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - "wildfly-swarm"
+      from:
+        kind: "ImageStreamTag"
+        name: "cdservice:latest"
+    type: "ImageChange"
 ----
 
-Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_OPTINOS parameter
+Remark : The location of the file to be used by WildFly Swarm is passed as JAVA_OPTIONS parameter
 
-. Deploy the cd service project
+. Deploy the `cdservice` project on Openshift using this maven instruction
 +
 [source]
 ----
-mvn fabric8:deploy -Popenshift
+mvn clean fabric8:deploy -Popenshift
 ----
 
-. Check that you can access the REST endpoint of the service. Remark : you can get the route address using the command `oc get route/cdservice-snowcamp`
+. Check that you can access the REST endpoint of the service.
+  Remark : you can retrieve the route address to access your service using this oc client command `oc get route/cdservice`
 
-  http://cdservice-snowcamp.192.168.99.119.xip.io/rest/catalogs
+  curl cdservice-snowcamp.192.168.99.100.xip.io/rest/catalogs
 
 
 ### Externalize Front Service
