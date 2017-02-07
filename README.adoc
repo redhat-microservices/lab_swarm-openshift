@@ -97,7 +97,7 @@ In order to use JBoss Forge with this lab, 2 addons should be installed to be ab
 ----
 brew install jboss-forge
 forge -e "addon-install --coordinate io.fabric8.forge:devops,2.3.88"
-forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1"
+forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1.1"
 ----
 
 # Goals
@@ -230,8 +230,8 @@ scaffold-setup --provider AngularJS
 scaffold-generate --provider AngularJS --generate-rest-resources --targets org.cdservice.model.*
 ----
 
-. As we want that our `cdservice` can be bootstrapped using the WildFly Swarm Java Microservices container, we will issue this Jboss Forge command
-  which will setup the maven module as a WildFly Swarm project and scan the project to detect the fractions to be included (Datasource, ...)
+. As we want that our `cdservice` can be bootstrapped using the WildFly Swarm Java Microservices container, we will issue this JBoss Forge command
+  which will setup the maven module as a WildFly Swarm project and will scan the project to detect the fractions to be included (Datasource, ...)
 +
 [source]
 ----

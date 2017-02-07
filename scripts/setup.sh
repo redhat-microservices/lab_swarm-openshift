@@ -16,7 +16,7 @@ if [[ -n $1 ]]; then
  rm -rf ~/.forge
  brew install jboss-forge
  forge -e "addon-install --coordinate io.fabric8.forge:devops,2.3.88"
- forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1"
+ forge -e "addon-install --coordinate org.jboss.forge.addon:wildfly-swarm,2017.1.1"
 fi
 
 
