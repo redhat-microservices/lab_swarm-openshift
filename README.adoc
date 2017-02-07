@@ -169,9 +169,10 @@ mv project snowcamp && cd snowcamp
 
 ### Catalog CD project
 
-. Next create the `cdservice` maven module using the following JBoss Forge command where the stack to be used is Java EE. JBoss Forge will create
-  a new maven module, configure the pom.xml file. The following command must be executed within the Forge shell or by passing the command using this convention
-  `forge -e "..."` where `...` correspobds to a Forge command.
+. Next create the `cdservice` maven module using the following JBoss Forge command. As this project is a Java EE project, we will pass as parameter to JBoss Forge the
+  stack to be used which is Java_EE_7. JBoss Forge will create a new maven module, configure the pom.xml file.
+  The following command must be executed within the Forge shell or by passing the command using this convention
+  `forge -e "..."` where `...` corresponds to a Forge command.
 +
 [source]
 ----
@@ -179,14 +180,16 @@ project-new --named cdservice --stack JAVA_EE_7
 ----
 
 . Setup the JPA project where the provider used is `Hibernate`, the database `MYSQL` which corresponds to the dialect to be configured within the persistence file of Hibernate.
-  Specify also the datasource and the persistent-unit name. All these parameters will be used by the Forge addon to populate the file persistence.xml under the directory META-INF
+  Specify also the datasource and the persistent-unit name. All these parameters will be used by the Forge addon to populate the file persistence.xml under the directory META-INF.
+  The command should be executed within the cdservice folder.
 +
 [source]
 ----
-# Define PostgreSQL DB
-jpa-setup --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
-[source]
+jpa-setup --configure-metadata --jpa-provider hibernate --db-type MYSQL --data-source-name java:jboss/datasources/CatalogDS --persistence-unit-name cdservice-persistence-unit
 ----
+
+Remark : The parameter `--configure-metadata` will tell to Forge to include within the pom.xml the Hibernate Maven plugin responsible to generate the classes from the Entity class
+         like the prersistence.xml file.
 
 . Create a Catalog Java (but also entity) class where the fields will be defined as such. It is not required to define the field with the PRIMARY key as it will be created
   by default by the JBoss Forge command.
@@ -201,7 +204,7 @@ jpa-new-field --named price --type java.lang.Float --target-entity org.cdservice
 jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE --target-entity org.cdservice.model.Catalog
 ----
 
-. As we target to communicate with a MySQL Databae, the mysql JDBC Java driver should be added to the pom definition of the module
+. As we target to communicate with a MySQL Database, the mysql JDBC Java driver should be added to the pom definition of the `cdservice` module
   using this command
 +
 [source]
@@ -209,8 +212,8 @@ jpa-new-field --named publicationDate --type java.util.Date --temporalType DATE 
 project-add-dependencies mysql:mysql-connector-java:5.1.40
 ----
 
-. As we would like to expose our Catalog of CDs as a Service published behind a REST endopiint, we will use another +JBoss Forge command responsible
-  to create a Rest Application and the Rest Service.
+. As we would like to expose our Catalog of CDs as a Service published behind as a REST endpoint, we will use another JBoss Forge command responsible
+  to create a RestApplication and the Rest Service ("CatalogEndpoint.class").
 +
 [source]
 ----
@@ -754,9 +757,9 @@ new GetCatalogListCommand(entityManager, startPosition, maxResult).execute();
 oc scale --replicas=0 dc mysql
 ----
 
-## TO BE REVIEWED
+## Tricks
 
-. Forward the traffic from the service to the host using `port-forwarding` command
+. Forward the traffic from the service as the MySQL Database to the host using `port-forwarding` command
 
 [source]
 ----
@@ -764,7 +767,7 @@ export pod=$(oc get pod | grep mysql | awk '{print $1}')
 oc port-forward $pod 3306:3306
 ----
 
-. Insert some records (if the table has been created !)
+. SQL query to insert CD records (if the table has been created !)
 +
 [source]
 ----
