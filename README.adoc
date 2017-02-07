@@ -846,7 +846,7 @@ oc policy add-role-to-user admin system:serviceaccount:snowcamp:turbine
 oc expose service turbine-server
 ----
 
-. Then a Hystrix dashboard
+. Then deply a Hystrix Web dashboard from where we can consult the events published within the Turbine server.
 +
 [source]
 ----
@@ -854,7 +854,7 @@ oc create -f http://repo1.maven.org/maven2/io/fabric8/kubeflix/hystrix-dashboard
 oc expose service hystrix-dashboard --port=8080
 ----
 
-. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice` (pom.xml)
+. Add WildFly Swarm Hystrix dependency to the pom.xml of the `cdservice` (pom.xml) project
 +
 [source]
 ----
@@ -864,7 +864,7 @@ oc expose service hystrix-dashboard --port=8080
 </dependency>
 ----
 
-. Add Hystrix enabled label to the service definition (src/main/fabric8/svc.yml)
+. Add Hystrix enabled label to the service definition (src/main/fabric8/svc.yml) as this label will be used by the Fabric Hystrix pod to collect thge info.
 +
 [source]
 ----
