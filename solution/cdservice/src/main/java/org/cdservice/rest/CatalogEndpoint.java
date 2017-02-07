@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import org.cdservice.model.Catalog;
+import org.cdservice.model.GetCatalogListCommand;
 
 /**
  * 
@@ -72,7 +73,7 @@ public class CatalogEndpoint {
 		return Response.ok(entity).build();
 	}
 
-	@GET
+/*	@GET
 	@Produces("application/json")
 	public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
 			@QueryParam("max") Integer maxResult) {
@@ -87,6 +88,15 @@ public class CatalogEndpoint {
 		}
 		final List<Catalog> results = findAllQuery.getResultList();
 		return results;
+	}*/
+
+	@GET
+	@Produces("application/json")
+	@SuppressWarnings("unchecked")
+	public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
+								 @QueryParam("max") Integer maxResult) {
+
+		return new GetCatalogListCommand(em, startPosition, maxResult).execute();
 	}
 
 	@PUT
