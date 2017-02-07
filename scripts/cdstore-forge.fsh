@@ -51,13 +51,13 @@ mkdir ../cdservice/src/main/webapp
 mkdir ../cdservice/src/main/webapp/WEB-INF
 
 cd ~~
-cd ..
+cd ../..
 
-# DO NOT WORK
-# cp front/public/ cdfront/src/main/webapp/
-# cp front/fabric8/ cdfront/src/main/fabric8/
+# Copy Front assets & Fabric8
+cp front/public/service.json snowcamp/cdfront/src/main/webapp/
+cp front/public/scripts/ snowcamp/cdfront/src/main/webapp/
+cp front/fabric8/ snowcamp/cdfront/src/main/fabric8/
 
-#
-# # Copy Service Fabric8 & SQL files
-# cp -rf $CURRENT/scripts/service/fabric8/ $TARGETDIR/cdservice/src/main/fabric8
-# cp $CURRENT/scripts/service/import.sql $TARGETDIR/cdservice/src/main/resources
+# Copy Service Fabric8 & SQL files
+cp service/fabric8/ snowcamp/cdservice/src/main/fabric8
+cp service/import.sql snowcamp/cdservice/src/main/resources
