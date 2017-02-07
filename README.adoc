@@ -993,7 +993,9 @@ You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-W
 
 ## Tricks
 
-. You can use the MySQL database running in OpenShift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
+### Access MySQL DB
+
+You can use the MySQL database running in OpenShift from your local machine if you forward the traffic from the service of the MySQL Database to the host using `port-forwarding` command
 +
 [source]
 ----
@@ -1001,7 +1003,9 @@ export pod=$(oc get pod | grep mysql | awk '{print $1}')
 oc port-forward $pod 3306:3306
 ----
 
-. In case you want to create some new records or add yours, use this SQL query to insert CD records (if the table has been created !)
+### Add records
+
+In case you want to create some new records or add yours, use this SQL query to insert CD records (if the table has been created !)
 +
 [source]
 ----
