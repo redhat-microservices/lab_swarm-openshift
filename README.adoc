@@ -712,7 +712,7 @@ cat << 'EOF' > src/main/webapp/service.json
 EOF
 ----
 
-. Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your `cdservice`
+. Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your virtual machine
 . Create this `config.js` file within the directory scripts containing a $http.get request to access the content
   of the json file & fetch the key `cd-service`. This key will contain the hostname or service name to be accessed
 
@@ -779,7 +779,7 @@ angular.module('cdservice').factory('CatalogResource', function ($resource, conf
 
     <script src="scripts/services/config.js"></script>
 
-. As we will deploy the CD Front project as a Servide that we will route externally from the host machine, we will create 2 OpenShift objects;
+. As we will deploy the CD Front project as a Service that we will route externally from the host machine, we will create 2 OpenShift objects;
   one to configure the service exposed by the Kubernetes Api (gateway) and the other to configure the HA Proxy how to access the service from the host machine
 . Add a `svc.yml` under the `src/main/fabric8` folder  where the target port is 8081 in order to create a service
 +
@@ -831,7 +831,9 @@ mvn fabric8:deploy
 
 . Check that you can access the HTML page of the Front. Remark : you can get the route address using the command `oc get route/cdfront-snowcamp`
 
-  http://cdfront-snowcamp.192.168.99.119.xip.io/
+  http://cdfront-snowcamp.MY_HOST_IP_ADDRESS.xip.io/
+
+.Change the `MY_HOST_IP_ADDRESS` key with the value of the private IP address of your virtual machine
 
 ## Enable circuit breaker
 
