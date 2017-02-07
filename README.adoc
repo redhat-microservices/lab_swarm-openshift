@@ -921,8 +921,7 @@ public class GetCatalogListCommand extends HystrixCommand<List> {
 EOF
 ----
 
-. Use GetCatalogListCommand to get a catalog list withing the
-Use GetCatalogListCommand whenever catalog list is required within the src/main/java/org/cdservice/rest/CatalogEndpoint.java
+. Register the GetCatalogListCommand within `src/main/java/org/cdservice/rest/CatalogEndpoint.java` class in order to access the Circuit Break or let's say to enable it.
 +
 [source]
 ----
@@ -936,7 +935,7 @@ public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
 }
 ----
 
-. Redeploy the modified service
+. Compile the `cdservice` and redeploy the modified `cdservice` pod on OpenShift.
 +
 [source]
 ----
