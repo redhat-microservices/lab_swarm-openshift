@@ -1,0 +1,65 @@
+apiVersion: "v1"
+kind: "DeploymentConfig"
+metadata:
+  name: "cdservice"
+spec:
+  replicas: 1
+  selector:
+    project: "cdservice"
+    provider: "fabric8"
+    group: "org.cdservice"
+  strategy:
+    rollingParams:
+      timeoutSeconds: 10800
+    type: "Rolling"
+  template:
+    spec:
+      containers:
+      - env:
+        - name: "KUBERNETES_NAMESPACE"
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.namespace"
+        - name: "AB_JOLOKIA_OFF"
+          value: "true"
+        - name: "JAVA_APP_DIR"
+          value: "/deployments"
+        - name: "AB_OFF"
+          value: "true"
+        - name: "JAVA_OPTIONS"
+          value: "-Dswarm.project.stage.file=file:///app/config/project-stages.yml"
+        image: "cdservice:latest"
+        imagePullPolicy: "IfNotPresent"
+        name: "wildfly-swarm"
+        ports:
+        - containerPort: 8080
+          name: "http"
+          protocol: "TCP"
+        - containerPort: 9779
+          name: "prometheus"
+          protocol: "TCP"
+        - containerPort: 8778
+          name: "jolokia"
+          protocol: "TCP"
+        securityContext:
+          privileged: false
+        volumeMounts:
+          - name: config
+            mountPath: /app/config
+      volumes:
+        - configMap:
+            name: ${project.artifactId}
+            items:
+            - key: "project-stages.yml"
+              path: "project-stages.yml"
+          name: config
+  triggers:
+  - type: "ConfigChange"
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - "wildfly-swarm"
+      from:
+        kind: "ImageStreamTag"
+        name: "cdservice:latest"
+    type: "ImageChange"

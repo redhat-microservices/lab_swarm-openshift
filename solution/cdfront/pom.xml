@@ -6,45 +6,13 @@
     <groupId>org.cdstore</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>cdservice</artifactId>
-  <groupId>org.cdservice</groupId>
+  <artifactId>cdfront</artifactId>
+  <groupId>org.cdfront</groupId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <build>
-    <finalName>cdservice</finalName>
+    <finalName>cdfront</finalName>
     <plugins>
-      <plugin>
-        <groupId>org.bsc.maven</groupId>
-        <artifactId>maven-processor-plugin</artifactId>
-        <version>3.2.0</version>
-        <executions>
-          <execution>
-            <id>process</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <processors>
-                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-              </processors>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.2.7.Final</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <proc>none</proc>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.wildfly.swarm</groupId>
         <artifactId>wildfly-swarm-plugin</artifactId>
@@ -56,6 +24,11 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <properties>
+            <swarm.http.port>8081</swarm.http.port>
+          </properties>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>io.fabric8</groupId>
@@ -87,22 +60,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-jpamodelgen</artifactId>
-      <version>5.2.7.Final</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.wildfly.swarm</groupId>
-      <artifactId>ejb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly.swarm</groupId>
-      <artifactId>jaxrs-jaxb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly.swarm</groupId>
-      <artifactId>jpa</artifactId>
+      <artifactId>undertow</artifactId>
     </dependency>
     <dependency>
       <groupId>io.fabric8</groupId>
@@ -111,45 +70,6 @@
     </dependency>
   </dependencies>
   <profiles>
-    <profile>
-      <id>local</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/config</directory>
-          </resource>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>com.h2database</groupId>
-          <artifactId>h2</artifactId>
-          <version>1.4.192</version>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>openshift</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/config-openshift</directory>
-          </resource>
-          <resource>
-            <directory>src/main/resources</directory>
-          </resource>
-        </resources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
     <profile>
       <id>kit</id>
       <activation />
@@ -175,11 +95,6 @@
         <artifactId>javaee-api</artifactId>
         <version>7.0</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.40</version>
       </dependency>
       <dependency>
         <groupId>org.wildfly.swarm</groupId>

@@ -7,10 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement
@@ -21,9 +21,15 @@ public class Catalog implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
+	@Version
+	@Column(name = "version")
+	private int version;
 
 	@Column
 	private String artist;
+
+	@Column
+	private String title;
 
 	@Column(length = 2000)
 	private String description;
@@ -35,15 +41,20 @@ public class Catalog implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date publicationDate;
 
-	@Column
-	private String title;
-
 	public Long getId() {
 		return this.id;
 	}
 
 	public void setId(final Long id) {
 		this.id = id;
+	}
+
+	public int getVersion() {
+		return this.version;
+	}
+
+	public void setVersion(final int version) {
+		this.version = version;
 	}
 
 	@Override
@@ -79,6 +90,14 @@ public class Catalog implements Serializable {
 		this.artist = artist;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -103,29 +122,22 @@ public class Catalog implements Serializable {
 		this.publicationDate = publicationDate;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	@Override
 	public String toString() {
 		String result = getClass().getSimpleName() + " ";
 		if (id != null)
 			result += "id: " + id;
+		result += ", version: " + version;
 		if (artist != null && !artist.trim().isEmpty())
 			result += ", artist: " + artist;
+		if (title != null && !title.trim().isEmpty())
+			result += ", title: " + title;
 		if (description != null && !description.trim().isEmpty())
 			result += ", description: " + description;
 		if (price != null)
 			result += ", price: " + price;
 		if (publicationDate != null)
 			result += ", publicationDate: " + publicationDate;
-		if (title != null && !title.trim().isEmpty())
-			result += ", title: " + title;
 		return result;
 	}
 }
