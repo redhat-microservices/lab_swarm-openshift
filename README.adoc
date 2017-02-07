@@ -22,7 +22,7 @@ you will need to install the following on your machine:
 
 # Installation of OpenShift
 
-In order to use OpenShift platform on your laptob, we will use the Minishift Go clientApplication which has been created from the Minikube project of Kubernetes. It extends the features proposed by the Kubernetes client to package/deploy
+In order to use OpenShift platform on your laptop, we will use the Minishift Go clientApplication which has been created from the Minikube project of Kubernetes. It extends the features proposed by the Kubernetes client to package/deploy
 OpenShift within a VM machine. Different hypervisors are supported as Virtualbox, xhyve & VMWare. You can find more information about Minishift like also how to install it from the project:
 https://github.com/minishift/minishift
 
