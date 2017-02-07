@@ -942,12 +942,14 @@ public List<Catalog> listAll(@QueryParam("start") Integer startPosition,
 mvn clean fabric8:deploy -Popenshift
 ----
 
-. Scale down the database, to see circuit breaker fallback
+. Scale down the database, to see circuit breaker fallback.
 +
 [source]
 ----
 oc scale --replicas=0 dc mysql
 ----
+
+. Refresh the CD Front and click on the `catalog` button. A record will be displayed with the info `This is a fallback record`
 
 You can read more about Hystrix https://github.com/Netflix/Hystrix/wiki/How-it-Works[here].
 
